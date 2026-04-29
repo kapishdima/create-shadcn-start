@@ -1,0 +1,32 @@
+[
+  {
+    "id": "placeholder-1",
+    "name": "TODO Registry 1",
+    "description": "TODO: replace with real registries",
+    "url": "https://example.com/r/registry-1.json"
+  },
+  {
+    "id": "placeholder-2",
+    "name": "TODO Registry 2",
+    "description": "TODO: replace with real registries",
+    "url": "https://example.com/r/registry-2.json"
+  },
+  {
+    "id": "placeholder-3",
+    "name": "TODO Registry 3",
+    "description": "TODO: replace with real registries",
+    "url": "https://example.com/r/registry-3.json"
+  },
+  {
+    "id": "placeholder-4",
+    "name": "TODO Registry 4",
+    "description": "TODO: replace with real registries",
+    "url": "https://example.com/r/registry-4.json"
+  },
+  {
+    "id": "placeholder-5",
+    "name": "TODO Registry 5",
+    "description": "TODO: replace with real registries",
+    "url": "https://example.com/r/registry-5.json"
+  }
+]
