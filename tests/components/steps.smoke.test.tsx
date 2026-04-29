@@ -12,8 +12,6 @@ const stepFiles = [
   'registries',
   'skills',
   'review',
-  'install',
-  'failed',
   'done',
 ];
 

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { createActor, fromCallback } from "xstate";
+import { createActor } from "xstate";
 import {
   wizardMachine,
   isBackDisabled,
@@ -148,11 +148,9 @@ describe("wizard machine", () => {
     expect(footerModeFor("project-name")).toBe("first");
     expect(footerModeFor("preset-choice")).toBe("default");
     expect(footerModeFor("install")).toBe("terminal");
-    expect(footerModeFor("done")).toBe("terminal");
 
     expect(isBackDisabled("project-name")).toBe(true);
     expect(isBackDisabled("install")).toBe(true);
-    expect(isBackDisabled("done")).toBe(true);
     expect(isBackDisabled("preset-choice")).toBe(false);
     expect(isBackDisabled("components")).toBe(false);
   });
@@ -165,77 +163,9 @@ describe("wizard machine", () => {
     expect(a.getSnapshot().value).toBe("preset-choice");
     expect(a.getSnapshot().context.lastRejected).toBeUndefined();
   });
-});
 
-describe("wizard machine - install state", () => {
-  // Override the install actor with a no-op so the test doesn't shell out.
-  const testMachine = wizardMachine.provide({
-    actors: {
-      runInstallCmds: fromCallback(() => () => {}),
-    },
-  });
-
-  function startToInstall() {
-    const a = createActor(testMachine, {
-      input: { pm: "pnpm", cwd: "/tmp/test" },
-    }).start();
-    a.send({ type: "SUBMIT_PROJECT_NAME", projectName: "demo" });
-    a.send({ type: "SUBMIT_PRESET_SOURCE", presetSource: "skip" });
-    a.send({ type: "SUBMIT_COMPONENTS", components: [] });
-    a.send({
-      type: "SUBMIT_REGISTRIES",
-      registries: [],
-      customRegistries: [],
-    });
-    a.send({ type: "SUBMIT_SKILLS", installShadcnSkill: false });
-    // review state is now between skills and install
-    a.send({ type: "SUBMIT_REVIEW" });
-    return a;
-  }
-
-  it("BACK from install is rejected and stays in install", () => {
-    const a = startToInstall();
-    expect(a.getSnapshot().value).toBe("install");
-    a.send({ type: "BACK" });
-    const s = a.getSnapshot();
-    expect(s.value).toBe("install");
-    expect(s.context.lastRejected).toEqual({
-      kind: "back-disabled",
-      from: "install",
-    });
-  });
-
-  it("INSTALL_DONE transitions to done", () => {
-    const a = startToInstall();
-    a.send({ type: "INSTALL_DONE" });
-    expect(a.getSnapshot().value).toBe("done");
-  });
-
-  it("INSTALL_FAILED transitions to failed and records exitCode", () => {
-    const a = startToInstall();
-    a.send({ type: "INSTALL_FAILED", exitCode: 7 });
-    const s = a.getSnapshot();
-    expect(s.value).toBe("failed");
-    expect(s.context.installExitCode).toBe(7);
-  });
-
-  it("BACK from done is rejected", () => {
-    const a = startToInstall();
-    a.send({ type: "INSTALL_DONE" });
-    expect(a.getSnapshot().value).toBe("done");
-    a.send({ type: "BACK" });
-    const s = a.getSnapshot();
-    expect(s.value).toBe("done");
-    expect(s.context.lastRejected).toEqual({
-      kind: "back-disabled",
-      from: "done",
-    });
-  });
-
-  it("SUBMIT_SKILLS arrives in review; SUBMIT_REVIEW arrives in install; BACK from review returns to skills", () => {
-    const a = createActor(testMachine, {
-      input: { pm: "pnpm", cwd: "/tmp/test" },
-    }).start();
+  it("skills SUBMIT_SKILLS arrives in review; SUBMIT_REVIEW arrives in install; BACK from review returns to skills", () => {
+    const a = start();
     a.send({ type: "SUBMIT_PROJECT_NAME", projectName: "demo" });
     a.send({ type: "SUBMIT_PRESET_SOURCE", presetSource: "skip" });
     a.send({ type: "SUBMIT_COMPONENTS", components: [] });
@@ -253,50 +183,6 @@ describe("wizard machine - install state", () => {
     a.send({ type: "SUBMIT_REVIEW" });
     expect(a.getSnapshot().value).toBe("install");
   });
-
-  it("INSTALL_PROGRESS updates all four context fields and stays in install", () => {
-    const a = startToInstall();
-    expect(a.getSnapshot().value).toBe("install");
-
-    a.send({
-      type: "INSTALL_PROGRESS",
-      current: 2,
-      total: 5,
-      label: "shadcn add button",
-      lastLine: "ok",
-    });
-
-    const s = a.getSnapshot();
-    expect(s.value).toBe("install");
-    expect(s.context.installCurrent).toBe(2);
-    expect(s.context.installTotal).toBe(5);
-    expect(s.context.installLabel).toBe("shadcn add button");
-    expect(s.context.installLastLine).toBe("ok");
-  });
-
-  it("INSTALL_FAILED with full payload records failedCmdLabel and tail", () => {
-    const a = startToInstall();
-    a.send({
-      type: "INSTALL_FAILED",
-      exitCode: 1,
-      failedCmdLabel: "shadcn init",
-      tail: ["line one", "line two"],
-    });
-    const s = a.getSnapshot();
-    expect(s.value).toBe("failed");
-    expect(s.context.installExitCode).toBe(1);
-    expect(s.context.installFailedCmdLabel).toBe("shadcn init");
-    expect(s.context.installTail).toEqual(["line one", "line two"]);
-  });
-
-  it("failed state EXIT transitions to exited", () => {
-    const a = startToInstall();
-    a.send({ type: "INSTALL_FAILED", exitCode: 1 });
-    expect(a.getSnapshot().value).toBe("failed");
-
-    a.send({ type: "EXIT" });
-    expect(a.getSnapshot().value).toBe("exited");
-  });
 });
 
 describe("wizard machine - phase metadata", () => {
@@ -304,11 +190,8 @@ describe("wizard machine - phase metadata", () => {
     expect(WIZARD_PHASE_TOTAL).toBe(6);
   });
 
-  it("phaseFor returns null for non-input steps", () => {
+  it("phaseFor returns null for install", () => {
     expect(phaseFor("install")).toBeNull();
-    expect(phaseFor("failed")).toBeNull();
-    expect(phaseFor("done")).toBeNull();
-    expect(phaseFor("exited")).toBeNull();
   });
 
   it("phaseFor returns correct phase for each input step", () => {

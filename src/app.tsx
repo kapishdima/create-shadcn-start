@@ -1,16 +1,15 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, useApp, useInput } from "ink";
 import { useMachine } from "@xstate/react";
 import {
   footerModeFor,
   getSceneMeta,
-  phaseFor,
   wizardMachine,
   type Step,
+  type WizardContext,
 } from "./machine.js";
 import { detectPm } from "./utils/detect-pm.js";
 import { Footer } from "./components/Footer.js";
-import { StepHeader } from "./components/StepHeader.js";
 import { ProjectName } from "./steps/project-name.js";
 import { PresetChoice } from "./steps/preset-choice.js";
 import { PresetCurated } from "./steps/preset-curated.js";
@@ -20,21 +19,25 @@ import { Components } from "./steps/components.js";
 import { Registries } from "./steps/registries.js";
 import { Skills } from "./steps/skills.js";
 import { Review } from "./steps/review.js";
-import { Install } from "./steps/install.js";
-import { Failed } from "./steps/failed.js";
-import { Done } from "./steps/done.js";
+import { StepHeader } from "./components/StepHeader.js";
+
+export type AppOutcome =
+  | { kind: "install"; ctx: WizardContext }
+  | { kind: "cancelled" };
 
 export type AppProps = {
   initialProjectName?: string;
+  onComplete?: (outcome: AppOutcome) => void;
 };
 
-export function App({ initialProjectName }: AppProps = {}) {
+export function App({ initialProjectName, onComplete }: AppProps = {}) {
   const pm = detectPm(process.env, process.cwd());
   const cwd = process.cwd();
   const [state, send] = useMachine(wizardMachine, {
     input: { pm, cwd, projectName: initialProjectName },
   });
   const { exit } = useApp();
+  const completedRef = useRef(false);
 
   useInput((_input, key) => {
     if (key.escape) {
@@ -47,7 +50,14 @@ export function App({ initialProjectName }: AppProps = {}) {
   const ctx = state.context;
   const meta = getSceneMeta(step);
   const mode = footerModeFor(step);
-  const phase = phaseFor(step);
+
+  useEffect(() => {
+    if (step === "install" && !completedRef.current) {
+      completedRef.current = true;
+      onComplete?.({ kind: "install", ctx });
+      exit();
+    }
+  }, [step, ctx, onComplete, exit]);
 
   const renderStep = () => {
     switch (step) {
@@ -131,40 +141,6 @@ export function App({ initialProjectName }: AppProps = {}) {
             onBack={() => send({ type: "BACK" })}
           />
         );
-      case "install":
-        return (
-          <Install
-            current={ctx.installCurrent}
-            total={ctx.installTotal}
-            label={ctx.installLabel}
-            lastLine={ctx.installLastLine}
-          />
-        );
-      case "failed":
-        return (
-          <Failed
-            exitCode={ctx.installExitCode ?? 1}
-            failedCmdLabel={ctx.installFailedCmdLabel ?? "unknown"}
-            tail={ctx.installTail ?? []}
-            onExit={() => {
-              process.exitCode = ctx.installExitCode ?? 1;
-              send({ type: "EXIT" });
-              exit();
-            }}
-          />
-        );
-      case "done":
-        return (
-          <Done
-            projectName={ctx.projectName ?? "your-app"}
-            pm={ctx.pm}
-            projectDir={ctx.cwd ? `${ctx.cwd}/${ctx.projectName ?? "your-app"}` : undefined}
-            onExit={() => {
-              send({ type: "EXIT" });
-              exit();
-            }}
-          />
-        );
       default:
         return null;
     }
@@ -172,9 +148,10 @@ export function App({ initialProjectName }: AppProps = {}) {
 
   return (
     <Box flexDirection="column">
-      {/* <StepHeader step={step} phase={phase} /> */}
       {renderStep()}
-      <Footer mode={mode} backAllowed={meta?.backAllowed ?? true} />
+      {step !== "install" ? (
+        <Footer mode={mode} backAllowed={meta?.backAllowed ?? true} />
+      ) : null}
     </Box>
   );
 }

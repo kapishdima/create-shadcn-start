@@ -1,7 +1,5 @@
-import { assign, fromCallback, setup } from "xstate";
-import { buildInstallCmds } from "./utils/build-install-cmds.js";
+import { assign, setup } from "xstate";
 import type { PM } from "./utils/detect-pm.js";
-import { runCmd } from "./utils/spawn.js";
 
 export type Step =
   | "project-name"
@@ -13,10 +11,7 @@ export type Step =
   | "registries"
   | "skills"
   | "review"
-  | "install"
-  | "failed"
-  | "done"
-  | "exited";
+  | "install";
 
 export type PresetSource = "curated" | "random" | "paste" | "skip";
 
@@ -43,19 +38,11 @@ export type WizardContext = {
   installShadcnSkill: boolean;
   lastRejected?: BackDisabled;
   autoSkipName: boolean;
-  installExitCode?: number;
-  installCurrent?: number;
-  installTotal?: number;
-  installLabel?: string;
-  installLastLine?: string;
-  installFailedCmdLabel?: string;
-  installTail?: string[];
 };
 
 export type WizardInput = { pm: PM; cwd: string; projectName?: string };
 
 export type WizardEvent =
-  | { type: "ADVANCE" }
   | { type: "SUBMIT_PROJECT_NAME"; projectName: string }
   | { type: "SUBMIT_PRESET_SOURCE"; presetSource: PresetSource }
   | { type: "SUBMIT_PRESET_CODE"; presetCode: string }
@@ -67,49 +54,7 @@ export type WizardEvent =
     }
   | { type: "SUBMIT_SKILLS"; installShadcnSkill: boolean }
   | { type: "SUBMIT_REVIEW" }
-  | { type: "BACK" }
-  | { type: "EXIT" }
-  | { type: "INSTALL_DONE" }
-  | {
-      type: "INSTALL_PROGRESS";
-      current: number;
-      total: number;
-      label: string;
-      lastLine?: string;
-    }
-  | {
-      type: "INSTALL_FAILED";
-      exitCode: number;
-      failedCmdLabel?: string;
-      tail?: string[];
-    };
-
-function deriveCmdLabel(argv: string[]): string {
-  const hasInit = argv.includes("init");
-  if (hasInit) return "shadcn init";
-
-  const hasAdd = argv.includes("add");
-  if (hasAdd) {
-    const addIdx = argv.indexOf("add");
-    const positionals = argv
-      .slice(addIdx + 1)
-      .filter((a) => !a.startsWith("-"));
-    if (positionals.length > 0) {
-      const spec = positionals[0];
-      if (spec.startsWith("@") || spec.includes("://")) {
-        return `shadcn add ${spec}`;
-      }
-      return `shadcn add ${positionals.join(", ")}`;
-    }
-    return "shadcn add";
-  }
-
-  if (argv[0] === "npx" && argv.includes("skills")) {
-    return "skills add shadcn-ui/ui";
-  }
-
-  return argv.slice(0, 3).join(" ");
-}
+  | { type: "BACK" };
 
 export const WIZARD_PHASE_TOTAL = 6;
 
@@ -153,54 +98,6 @@ export const wizardMachine = setup({
       context.history.at(-1) === "preset-paste",
     backFromChoice: ({ context }) =>
       context.history.at(-1) === "preset-choice",
-  },
-  actors: {
-    runInstallCmds: fromCallback<
-      WizardEvent,
-      { state: WizardContext; pm: PM; cwd: string }
-    >(({ input, sendBack }) => {
-      let cancelled = false;
-      (async () => {
-        const cmds = buildInstallCmds(input.state, input.pm, input.cwd);
-        const total = cmds.length;
-        for (let i = 0; i < cmds.length; i++) {
-          if (cancelled) return;
-          const cmd = cmds[i];
-          const label = deriveCmdLabel(cmd.argv);
-          sendBack({
-            type: "INSTALL_PROGRESS",
-            current: i + 1,
-            total,
-            label,
-          });
-          const r = await runCmd(cmd, (line, stream) => {
-            if (stream === "stderr") return;
-            if (cancelled) return;
-            sendBack({
-              type: "INSTALL_PROGRESS",
-              current: i + 1,
-              total,
-              label,
-              lastLine: line,
-            });
-          });
-          if (cancelled) return;
-          if (r.exitCode !== 0) {
-            sendBack({
-              type: "INSTALL_FAILED",
-              exitCode: r.exitCode,
-              failedCmdLabel: label,
-              tail: r.tail,
-            });
-            return;
-          }
-        }
-        if (!cancelled) sendBack({ type: "INSTALL_DONE" });
-      })();
-      return () => {
-        cancelled = true;
-      };
-    }),
   },
 }).createMachine({
   id: "wizard",
@@ -444,69 +341,13 @@ export const wizardMachine = setup({
       },
     },
     install: {
-      entry: "clearLastRejected",
       meta: {
         footerMode: "terminal",
         backAllowed: false,
         phase: null,
       } satisfies SceneMeta,
-      invoke: {
-        src: "runInstallCmds",
-        input: ({ context }) => ({
-          state: context,
-          pm: context.pm,
-          cwd: context.cwd,
-        }),
-      },
-      on: {
-        INSTALL_DONE: { target: "done" },
-        INSTALL_PROGRESS: {
-          actions: assign({
-            installCurrent: ({ event }) => event.current,
-            installTotal: ({ event }) => event.total,
-            installLabel: ({ event }) => event.label,
-            installLastLine: ({ event }) => event.lastLine,
-          }),
-        },
-        INSTALL_FAILED: {
-          target: "failed",
-          actions: assign({
-            installExitCode: ({ event }) => event.exitCode,
-            installFailedCmdLabel: ({ event }) => event.failedCmdLabel,
-            installTail: ({ event }) => event.tail,
-          }),
-        },
-        BACK: {
-          actions: { type: "rejectBack", params: { from: "install" } },
-        },
-      },
+      type: "final",
     },
-    failed: {
-      entry: "clearLastRejected",
-      meta: {
-        footerMode: "terminal",
-        backAllowed: false,
-        phase: null,
-      } satisfies SceneMeta,
-      on: {
-        EXIT: { target: "exited" },
-      },
-    },
-    done: {
-      entry: "clearLastRejected",
-      meta: {
-        footerMode: "terminal",
-        backAllowed: false,
-        phase: null,
-      } satisfies SceneMeta,
-      on: {
-        BACK: {
-          actions: { type: "rejectBack", params: { from: "done" } },
-        },
-        EXIT: { target: "exited" },
-      },
-    },
-    exited: { type: "final" },
   },
 });
 

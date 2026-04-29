@@ -69,10 +69,10 @@ export function buildInstallCmds(
     "init",
     "--name",
     projectName,
-    "--template",
-    "next",
-    "--yes",
-    "--no-monorepo",
+    // "--template",
+    // "next",
+    // "--yes",
+    // "--no-monorepo",
   ];
   if (stateLike.presetSource !== "skip" && stateLike.presetCode) {
     initArgs.push("--preset", stateLike.presetCode);
@@ -96,7 +96,7 @@ export function buildInstallCmds(
   for (const reg of allRegistries) {
     cmds.push({
       pm: resolvedPm,
-      argv: [...dlx, "shadcn@latest", "add", "--yes", reg],
+      argv: [...dlx, "shadcn@latest", "registry", "add", "--yes", reg],
       cwd: projectDir,
     });
   }
