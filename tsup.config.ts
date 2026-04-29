@@ -9,5 +9,5 @@ export default defineConfig({
   dts: false,
   splitting: false,
   shims: false,
-  loader: { '.json': 'copy' },
+  loader: { '.json': 'json' },
 })

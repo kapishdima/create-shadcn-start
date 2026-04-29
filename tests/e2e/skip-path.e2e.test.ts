@@ -54,7 +54,6 @@ describe.skipIf(!E2E_ENABLED)('e2e: skip path', () => {
       child.on('exit', (code) => resolveExit(code ?? 1));
     });
 
-    await send('\r', 200); // welcome -> next
     await send(`${projectName}\r`, 200); // project name
     // Navigate to "Skip" in preset-choice (3 down arrows then enter)
     await send('[B', 100);

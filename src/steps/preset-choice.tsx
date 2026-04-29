@@ -1,7 +1,7 @@
 import React from "react";
-import { Box, Text } from "ink";
 import SelectInput from "ink-select-input";
-import type { PresetSource } from "../state.js";
+import type { PresetSource } from "../machine.js";
+import { StepShell } from "../components/StepShell.js";
 
 export type PresetChoiceProps = {
   initial?: PresetSource;
@@ -19,16 +19,15 @@ export function PresetChoice({ initial, onSubmit }: PresetChoiceProps) {
   const initialIndex = initial ? ITEMS.findIndex((i) => i.value === initial) : 0;
 
   return (
-    <Box flexDirection="column" paddingX={1}>
-      <Text bold>Theme preset</Text>
-      <Text color="gray">Choose a starting palette and typography.</Text>
-      <Box marginTop={1}>
-        <SelectInput
-          items={ITEMS}
-          initialIndex={initialIndex < 0 ? 0 : initialIndex}
-          onSelect={(item) => onSubmit(item.value)}
-        />
-      </Box>
-    </Box>
+    <StepShell
+      title="Theme preset"
+      subtitle="Choose a starting palette and typography."
+    >
+      <SelectInput
+        items={ITEMS}
+        initialIndex={initialIndex < 0 ? 0 : initialIndex}
+        onSelect={(item) => onSubmit(item.value)}
+      />
+    </StepShell>
   );
 }

@@ -4,8 +4,11 @@ import SelectInput from "ink-select-input";
 import {
   encodePreset,
   generateRandomConfig,
-} from "../vendored/shadcn-preset.js";
+} from "shadcn/preset";
 import { openUrl } from "../utils/open-url.js";
+import { StepShell } from "../components/StepShell.js";
+import { ErrorBanner } from "../components/ErrorBanner.js";
+import { theme } from "../theme.js";
 
 export type PresetRandomProps = {
   onSubmit: (code: string) => void;
@@ -46,20 +49,21 @@ export function PresetRandom({ onSubmit }: PresetRandomProps) {
   };
 
   return (
-    <Box flexDirection="column" paddingX={1}>
-      <Text bold>Random preset</Text>
-      <Box marginTop={1} flexDirection="column">
-        <Text>Code: <Text color="cyan">{code}</Text></Text>
-        <Text>Preview: <Text color="gray">{previewUrl(code)}</Text></Text>
+    <StepShell title="Random preset">
+      <Box flexDirection="column">
+        <Text>
+          Code: <Text color={theme.active}>{code}</Text>
+        </Text>
+        <Text>
+          Preview: <Text color={theme.subtle}>{previewUrl(code)}</Text>
+        </Text>
       </Box>
       <Box marginTop={1}>
         <SelectInput items={ACTIONS} onSelect={handleSelect} />
       </Box>
       {openError ? (
-        <Box marginTop={1}>
-          <Text color="red">Could not open browser: {openError}</Text>
-        </Box>
+        <ErrorBanner message={`Could not open browser: ${openError}`} />
       ) : null}
-    </Box>
+    </StepShell>
   );
 }

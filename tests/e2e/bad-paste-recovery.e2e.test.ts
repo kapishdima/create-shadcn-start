@@ -49,7 +49,6 @@ describe.skipIf(!E2E_ENABLED)('e2e: bad-paste recovery', () => {
       child.on('exit', (code) => resolveExit(code ?? 1));
     });
 
-    await send('\r', 200);
     await send(`${projectName}\r`, 200);
     // Move down twice to get to "Custom" / paste branch
     await send('[B', 100);

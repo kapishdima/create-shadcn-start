@@ -19,7 +19,7 @@ let importError: unknown;
 
 beforeAll(async () => {
   try {
-    mod = (await import('../../src/vendored/shadcn-preset.js')) as Mod;
+    mod = (await import('shadcn/preset')) as Mod;
   } catch (err) {
     importError = err;
   }

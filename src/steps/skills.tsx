@@ -1,6 +1,6 @@
 import React from "react";
-import { Box, Text } from "ink";
 import SelectInput from "ink-select-input";
+import { StepShell } from "../components/StepShell.js";
 
 export type SkillsProps = {
   initial?: boolean;
@@ -16,18 +16,15 @@ export function Skills({ initial = true, onSubmit }: SkillsProps) {
   const initialIndex = initial ? 0 : 1;
 
   return (
-    <Box flexDirection="column" paddingX={1}>
-      <Text bold>Agent skill</Text>
-      <Text color="gray">
-        Install the shadcn agent skill for Claude Code / Cursor / etc.?
-      </Text>
-      <Box marginTop={1}>
-        <SelectInput
-          items={ITEMS}
-          initialIndex={initialIndex}
-          onSelect={(item) => onSubmit(item.value === "yes")}
-        />
-      </Box>
-    </Box>
+    <StepShell
+      title="Agent skill"
+      subtitle="Install the shadcn agent skill for Claude Code / Cursor / etc.?"
+    >
+      <SelectInput
+        items={ITEMS}
+        initialIndex={initialIndex}
+        onSelect={(item) => onSubmit(item.value === "yes")}
+      />
+    </StepShell>
   );
 }

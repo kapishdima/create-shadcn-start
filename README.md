@@ -86,7 +86,7 @@ Screenshots TBD.
 
 Four ways to choose a theme:
 
-- **Curated** presets ship in `src/data/presets.json`. Source of truth is the user's curated list at `dialectcn.xyz`.
+- **Curated** presets ship in `src/data/presets.json`
 - **Random** generates a base62 code locally using a vendored copy of shadcn's `generateRandomConfig` and `encodePreset`. The CLI prints a preview URL of the form `https://ui.shadcn.com/create?preset=<code>` so you can see the theme in the browser before accepting.
 - **Custom** sends you to `https://ui.shadcn.com/create` to design a preset, then accepts the code via paste. The pasted code is validated locally before the wizard advances.
 - **Skip** omits `--preset` from the `shadcn init` invocation; shadcn applies its built-in default theme.
@@ -123,21 +123,6 @@ E2E=1 pnpm test:e2e
 
 Unit and component tests run on every PR. E2E tests hit the real `shadcn` CLI and the network and run nightly on CI.
 
-The repo is structured around four scope-specific subagents under `.claude/agents/`:
-
-- `infra.md` — `package.json`, configs, workflows, lockfile.
-- `impl.md` — everything under `src/`.
-- `tests.md` — everything under `tests/`.
-- `docs.md` — `README.md` and `CHANGELOG.md`.
-
-Each agent has a tight scope and a "do not touch" boundary so they can run in parallel.
-
 ## License
 
-MIT.
-
-## Acknowledgements
-
-- [shadcn-ui/ui](https://github.com/shadcn-ui/ui) — vendored preset encoding, decoding, and random-config code (MIT, attributed in `src/vendored/shadcn-preset.ts`).
-- [dialectcn.xyz](https://dialectcn.xyz) — preset catalog inspiration.
-- [Vercel Labs `skills`](https://github.com/vercel-labs/skills) — agent skill installer used for the optional shadcn skill step.
+MIT

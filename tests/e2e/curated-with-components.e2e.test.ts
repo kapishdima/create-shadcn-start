@@ -50,7 +50,6 @@ describe.skipIf(!E2E_ENABLED)('e2e: curated preset with components', () => {
     });
 
     // TODO(impl): script to pick first curated preset and toggle 2 components.
-    await send('\r', 200);
     await send(`${projectName}\r`, 200);
     await send('\r', 200); // pick "Curated"
     await send('\r', 200); // accept first preset

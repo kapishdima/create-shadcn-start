@@ -1,5 +1,5 @@
 import { join } from "node:path";
-import type { State } from "../state.js";
+import type { WizardContext as State } from "../machine.js";
 import type { PM } from "./detect-pm.js";
 
 export type Cmd = {
@@ -67,15 +67,18 @@ export function buildInstallCmds(
   const initArgs: string[] = [
     "shadcn@latest",
     "init",
+    "--name",
     projectName,
     "--template",
     "next",
     "--yes",
     "--no-monorepo",
-    "--silent",
   ];
   if (stateLike.presetSource !== "skip" && stateLike.presetCode) {
     initArgs.push("--preset", stateLike.presetCode);
+  } else {
+    // No preset chosen: use --defaults so shadcn doesn't prompt for base/preset.
+    initArgs.push("--defaults");
   }
   cmds.push({ pm: resolvedPm, argv: [...dlx, ...initArgs], cwd });
 
@@ -83,7 +86,7 @@ export function buildInstallCmds(
   if (components.length > 0) {
     cmds.push({
       pm: resolvedPm,
-      argv: [...dlx, "shadcn@latest", "add", ...components],
+      argv: [...dlx, "shadcn@latest", "add", "--yes", ...components],
       cwd: projectDir,
     });
   }
@@ -93,7 +96,7 @@ export function buildInstallCmds(
   for (const reg of allRegistries) {
     cmds.push({
       pm: resolvedPm,
-      argv: [...dlx, "shadcn@latest", "add", reg],
+      argv: [...dlx, "shadcn@latest", "add", "--yes", reg],
       cwd: projectDir,
     });
   }

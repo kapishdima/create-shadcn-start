@@ -28,7 +28,7 @@ async function loadApp(): Promise<
 }
 
 describe('footer hint', () => {
-  it('renders the footer hint with navigation tokens on the welcome step', async () => {
+  it('renders the footer hint with navigation tokens on the first step', async () => {
     const App = await loadApp();
     if (!App) {
       // TODO(impl): once src/app.tsx exists, render <App /> and verify

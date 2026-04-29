@@ -3,7 +3,6 @@ import React from 'react';
 import { render } from 'ink-testing-library';
 
 const stepFiles = [
-  'welcome',
   'project-name',
   'preset-choice',
   'preset-curated',
@@ -12,19 +11,27 @@ const stepFiles = [
   'components',
   'registries',
   'skills',
+  'review',
   'install',
+  'failed',
   'done',
 ];
 
 const fixtureState = {
-  step: 'welcome' as const,
+  step: 'project-name' as const,
   history: [],
+  pm: 'pnpm' as const,
+  cwd: '/tmp/test',
   projectName: 'demo',
   presetSource: 'curated' as const,
   presetCode: 'aIkeymG',
   components: ['button'],
   registries: [],
+  customRegistries: [],
   installShadcnSkill: true,
+  installExitCode: 1,
+  installFailedCmdLabel: 'shadcn init',
+  installTail: ['line one'],
 };
 
 describe('step components - smoke render', () => {
@@ -62,6 +69,22 @@ describe('step components - smoke render', () => {
         dispatch: noop,
         next: noop,
         back: noop,
+        // review
+        ctx: fixtureState,
+        onConfirm: noop,
+        onBack: noop,
+        // install
+        current: 1,
+        total: 3,
+        label: 'shadcn init',
+        lastLine: 'ok',
+        // failed
+        exitCode: 1,
+        failedCmdLabel: 'shadcn init',
+        tail: ['line one'],
+        onExit: noop,
+        // done
+        projectDir: '/tmp/test/demo',
       };
       try {
         const { lastFrame, unmount } = render(

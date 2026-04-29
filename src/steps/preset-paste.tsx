@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Box, Text, useInput } from "ink";
 import TextInput from "ink-text-input";
-import { isPresetCode } from "../vendored/shadcn-preset.js";
+import { isPresetCode } from "shadcn/preset";
 import { openUrl } from "../utils/open-url.js";
+import { StepShell } from "../components/StepShell.js";
+import { ErrorBanner } from "../components/ErrorBanner.js";
 
 const DESIGNER_URL = "https://ui.shadcn.com/create";
 
@@ -34,13 +36,11 @@ export function PresetPaste({ onSubmit }: PresetPasteProps) {
   };
 
   return (
-    <Box flexDirection="column" paddingX={1}>
-      <Text bold>Paste a preset code</Text>
-      <Text color="gray">
-        Open {DESIGNER_URL}, design, copy the preset code, paste below.
-      </Text>
-      <Text color="gray">Press 'o' to open the designer in your browser.</Text>
-      <Box marginTop={1}>
+    <StepShell
+      title="Paste a preset code"
+      subtitle={`Open ${DESIGNER_URL}, design, copy the preset code, paste below. Press 'o' to open the designer.`}
+    >
+      <Box>
         <Text>{"> "}</Text>
         <TextInput
           value={value}
@@ -52,16 +52,10 @@ export function PresetPaste({ onSubmit }: PresetPasteProps) {
           placeholder="bxyz123"
         />
       </Box>
-      {error ? (
-        <Box marginTop={1}>
-          <Text color="red">Error: {error}</Text>
-        </Box>
-      ) : null}
+      {error ? <ErrorBanner message={error} /> : null}
       {openError ? (
-        <Box marginTop={1}>
-          <Text color="red">Could not open browser: {openError}</Text>
-        </Box>
+        <ErrorBanner message={`Could not open browser: ${openError}`} />
       ) : null}
-    </Box>
+    </StepShell>
   );
 }

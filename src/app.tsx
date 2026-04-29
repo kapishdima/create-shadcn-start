@@ -1,8 +1,16 @@
-import React, { useReducer } from "react";
-import { Box, Text, useApp, useInput } from "ink";
-import { INITIAL_STATE, isBackDisabled, reducer, type Step } from "./state.js";
+import React from "react";
+import { Box, useApp, useInput } from "ink";
+import { useMachine } from "@xstate/react";
+import {
+  footerModeFor,
+  getSceneMeta,
+  phaseFor,
+  wizardMachine,
+  type Step,
+} from "./machine.js";
 import { detectPm } from "./utils/detect-pm.js";
-import { Welcome } from "./steps/welcome.js";
+import { Footer } from "./components/Footer.js";
+import { StepHeader } from "./components/StepHeader.js";
 import { ProjectName } from "./steps/project-name.js";
 import { PresetChoice } from "./steps/preset-choice.js";
 import { PresetCurated } from "./steps/preset-curated.js";
@@ -11,67 +19,53 @@ import { PresetPaste } from "./steps/preset-paste.js";
 import { Components } from "./steps/components.js";
 import { Registries } from "./steps/registries.js";
 import { Skills } from "./steps/skills.js";
+import { Review } from "./steps/review.js";
 import { Install } from "./steps/install.js";
+import { Failed } from "./steps/failed.js";
 import { Done } from "./steps/done.js";
 
-type FooterMode = "default" | "first" | "install" | "terminal";
+export type AppProps = {
+  initialProjectName?: string;
+};
 
-function footerHint(mode: FooterMode): string {
-  switch (mode) {
-    case "first":
-      return "enter confirm   ctrl+c quit";
-    case "install":
-      return "ctrl+c cancel install";
-    case "terminal":
-      return "enter exit";
-    case "default":
-    default:
-      return "up/down navigate   space toggle   enter confirm   esc back   ctrl+c quit";
-  }
-}
-
-function footerModeFor(step: Step): FooterMode {
-  if (step === "welcome" || step === "project-name") return "first";
-  if (step === "install") return "install";
-  if (step === "done") return "terminal";
-  return "default";
-}
-
-export function App() {
-  const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
-  const { exit } = useApp();
+export function App({ initialProjectName }: AppProps = {}) {
   const pm = detectPm(process.env, process.cwd());
+  const cwd = process.cwd();
+  const [state, send] = useMachine(wizardMachine, {
+    input: { pm, cwd, projectName: initialProjectName },
+  });
+  const { exit } = useApp();
 
   useInput((_input, key) => {
     if (key.escape) {
-      if (!isBackDisabled(state.step)) {
-        dispatch({ type: "back" });
-      }
+      send({ type: "BACK" });
       return;
     }
   });
 
+  const step = state.value as Step;
+  const ctx = state.context;
+  const meta = getSceneMeta(step);
+  const mode = footerModeFor(step);
+  const phase = phaseFor(step);
+
   const renderStep = () => {
-    switch (state.step) {
-      case "welcome":
-        return (
-          <Welcome onAdvance={() => dispatch({ type: "next" })} />
-        );
+    switch (step) {
       case "project-name":
         return (
           <ProjectName
-            initialValue={state.projectName}
+            initialValue={ctx.projectName}
             onSubmit={(projectName) =>
-              dispatch({ type: "next", projectName })
+              send({ type: "SUBMIT_PROJECT_NAME", projectName })
             }
           />
         );
       case "preset-choice":
         return (
           <PresetChoice
-            initial={state.presetSource}
+            initial={ctx.presetSource}
             onSubmit={(presetSource) =>
-              dispatch({ type: "next", presetSource })
+              send({ type: "SUBMIT_PRESET_SOURCE", presetSource })
             }
           />
         );
@@ -79,7 +73,7 @@ export function App() {
         return (
           <PresetCurated
             onSubmit={(presetCode) =>
-              dispatch({ type: "next", presetCode })
+              send({ type: "SUBMIT_PRESET_CODE", presetCode })
             }
           />
         );
@@ -87,7 +81,7 @@ export function App() {
         return (
           <PresetRandom
             onSubmit={(presetCode) =>
-              dispatch({ type: "next", presetCode })
+              send({ type: "SUBMIT_PRESET_CODE", presetCode })
             }
           />
         );
@@ -95,16 +89,16 @@ export function App() {
         return (
           <PresetPaste
             onSubmit={(presetCode) =>
-              dispatch({ type: "next", presetCode })
+              send({ type: "SUBMIT_PRESET_CODE", presetCode })
             }
           />
         );
       case "components":
         return (
           <Components
-            initial={state.components.length > 0 ? state.components : undefined}
+            initial={ctx.components.length > 0 ? ctx.components : undefined}
             onSubmit={(components) =>
-              dispatch({ type: "next", components })
+              send({ type: "SUBMIT_COMPONENTS", components })
             }
           />
         );
@@ -112,8 +106,8 @@ export function App() {
         return (
           <Registries
             onSubmit={(urls, customRegistries) =>
-              dispatch({
-                type: "next",
+              send({
+                type: "SUBMIT_REGISTRIES",
                 registries: urls,
                 customRegistries,
               })
@@ -123,50 +117,64 @@ export function App() {
       case "skills":
         return (
           <Skills
-            initial={state.installShadcnSkill}
+            initial={ctx.installShadcnSkill}
             onSubmit={(installShadcnSkill) =>
-              dispatch({ type: "next", installShadcnSkill })
+              send({ type: "SUBMIT_SKILLS", installShadcnSkill })
             }
+          />
+        );
+      case "review":
+        return (
+          <Review
+            ctx={ctx}
+            onConfirm={() => send({ type: "SUBMIT_REVIEW" })}
+            onBack={() => send({ type: "BACK" })}
           />
         );
       case "install":
         return (
           <Install
-            state={state}
-            pm={pm}
-            onDone={(success) => {
-              if (success) {
-                dispatch({ type: "next" });
-              }
-              // On failure we leave the user on the install screen with the
-              // error visible; they can ctrl+c to quit.
+            current={ctx.installCurrent}
+            total={ctx.installTotal}
+            label={ctx.installLabel}
+            lastLine={ctx.installLastLine}
+          />
+        );
+      case "failed":
+        return (
+          <Failed
+            exitCode={ctx.installExitCode ?? 1}
+            failedCmdLabel={ctx.installFailedCmdLabel ?? "unknown"}
+            tail={ctx.installTail ?? []}
+            onExit={() => {
+              process.exitCode = ctx.installExitCode ?? 1;
+              send({ type: "EXIT" });
+              exit();
             }}
           />
         );
       case "done":
         return (
           <Done
-            projectName={state.projectName ?? "your-app"}
-            pm={pm}
-            onExit={() => exit()}
+            projectName={ctx.projectName ?? "your-app"}
+            pm={ctx.pm}
+            projectDir={ctx.cwd ? `${ctx.cwd}/${ctx.projectName ?? "your-app"}` : undefined}
+            onExit={() => {
+              send({ type: "EXIT" });
+              exit();
+            }}
           />
         );
+      default:
+        return null;
     }
   };
 
-  const mode = footerModeFor(state.step);
-
   return (
     <Box flexDirection="column">
+      {/* <StepHeader step={step} phase={phase} /> */}
       {renderStep()}
-      <Box marginTop={1} paddingX={1}>
-        <Text color="gray">{footerHint(mode)}</Text>
-      </Box>
-      {state.lastRejected && state.step !== "install" ? (
-        <Box paddingX={1}>
-          <Text color="yellow">Back is not available on this step.</Text>
-        </Box>
-      ) : null}
+      <Footer mode={mode} backAllowed={meta?.backAllowed ?? true} />
     </Box>
   );
 }

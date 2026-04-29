@@ -1,11 +1,13 @@
 import React from "react";
 import { Box, Text, useInput } from "ink";
 import type { PM } from "../utils/detect-pm.js";
+import { theme } from "../theme.js";
 
 export type DoneProps = {
   projectName: string;
   pm: PM;
   onExit: () => void;
+  projectDir?: string;
 };
 
 function devCommand(pm: PM): string {
@@ -21,21 +23,21 @@ function devCommand(pm: PM): string {
   }
 }
 
-export function Done({ projectName, pm, onExit }: DoneProps) {
+export function Done({ projectName, pm, onExit, projectDir }: DoneProps) {
   useInput((_input, key) => {
     if (key.return) onExit();
   });
 
+  const dir = projectDir ?? projectName;
+
   return (
     <Box flexDirection="column" paddingX={1}>
-      <Text bold color="green">Done.</Text>
-      <Box marginTop={1} flexDirection="column">
-        <Text>Next steps:</Text>
-        <Text>  cd {projectName}</Text>
-        <Text>  {devCommand(pm)}</Text>
-      </Box>
-      <Box marginTop={1}>
-        <Text color="gray">Press Enter to exit.</Text>
+      <Text>
+        Project ready at <Text color={theme.success}>{dir}</Text>
+      </Text>
+      <Box borderStyle="round" paddingX={1} flexDirection="column" marginTop={1}>
+        <Text>cd {projectName}</Text>
+        <Text>{devCommand(pm)}</Text>
       </Box>
     </Box>
   );

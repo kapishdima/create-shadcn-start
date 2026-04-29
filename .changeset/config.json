@@ -1,6 +1,6 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@3.0.0/schema.json",
-  "changelog": ["@changesets/changelog-github", { "repo": "TBD-OWNER/create-shadcn-app" }],
+  "changelog": ["@changesets/changelog-github", { "repo": "kapishdima/create-shadcn-app" }],
   "commit": false,
   "fixed": [],
   "linked": [],
