@@ -4,7 +4,15 @@
   "description": "Interactive scaffolder for shadcn-based projects",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kapishdima/create-shadcn-start.git"
+    "url": "https://github.com/kapishdima/create-shadcn-start.git"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "kapishdima",
+    "url": "https://twitter.com/kapishdima"
   },
   "type": "module",
   "bin": {
