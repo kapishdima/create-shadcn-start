@@ -8,13 +8,13 @@ export type FrameworkProps = {
   onSubmit: (framework: FrameworkTemplate) => void;
 };
 
-const ITEMS: { label: string; value: FrameworkTemplate }[] = [
-  { label: "Next.js", value: "next" },
-  { label: "Vite", value: "vite" },
-  { label: "TanStack Start", value: "tanstack-start" },
-  { label: "Astro", value: "astro" },
-  { label: "React Router", value: "react-router" },
-  { label: "Skip - use Next.js (default)", value: "next" },
+const ITEMS: { key: string; label: string; value: FrameworkTemplate }[] = [
+  { key: "next", label: "Next.js", value: "next" },
+  { key: "vite", label: "Vite", value: "vite" },
+  { key: "tanstack-start", label: "TanStack Start", value: "tanstack-start" },
+  { key: "astro", label: "Astro", value: "astro" },
+  { key: "react-router", label: "React Router", value: "react-router" },
+  { key: "skip", label: "Skip - use Next.js (default)", value: "next" },
 ];
 
 export function Framework({ initial, onSubmit }: FrameworkProps) {
