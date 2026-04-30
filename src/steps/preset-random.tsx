@@ -7,7 +7,7 @@ import {
 } from "shadcn/preset";
 import { openUrl } from "../utils/open-url.js";
 import { StepShell } from "../components/StepShell.js";
-import { ErrorBanner } from "../components/ErrorBanner.js";
+import { Alert } from "../components/ui/alert.js";
 import { theme } from "../theme.js";
 
 export type PresetRandomProps = {
@@ -49,7 +49,7 @@ export function PresetRandom({ onSubmit }: PresetRandomProps) {
   };
 
   return (
-    <StepShell title="Random preset">
+    <StepShell>
       <Box flexDirection="column">
         <Text>
           Code: <Text color={theme.active}>{code}</Text>
@@ -62,7 +62,7 @@ export function PresetRandom({ onSubmit }: PresetRandomProps) {
         <SelectInput items={ACTIONS} onSelect={handleSelect} />
       </Box>
       {openError ? (
-        <ErrorBanner message={`Could not open browser: ${openError}`} />
+        <Alert variant="error">{`Could not open browser: ${openError}`}</Alert>
       ) : null}
     </StepShell>
   );

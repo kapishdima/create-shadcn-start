@@ -12,7 +12,10 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   },
   "include": ["src", "tests"]
 }

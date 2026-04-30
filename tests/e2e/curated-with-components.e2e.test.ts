@@ -51,6 +51,7 @@ describe.skipIf(!E2E_ENABLED)('e2e: curated preset with components', () => {
 
     // TODO(impl): script to pick first curated preset and toggle 2 components.
     await send(`${projectName}\r`, 200);
+    await send('\r', 200); // framework: accept Next.js default
     await send('\r', 200); // pick "Curated"
     await send('\r', 200); // accept first preset
     await send(' ', 100); // toggle component 1
@@ -59,6 +60,7 @@ describe.skipIf(!E2E_ENABLED)('e2e: curated preset with components', () => {
     await send('\r', 200); // confirm components
     await send('\r', 200); // registries
     await send('n\r', 200); // skills no
+    await send('\r', 200); // init-options: accept defaults
 
     const exitCode = await Promise.race([
       done,

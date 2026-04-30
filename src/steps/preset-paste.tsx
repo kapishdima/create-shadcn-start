@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Box, Text, useInput } from "ink";
-import TextInput from "ink-text-input";
+import { useInput } from "ink";
 import { isPresetCode } from "shadcn/preset";
 import { openUrl } from "../utils/open-url.js";
+import { TextInput } from "../components/ui/text-input.js";
+import { Alert } from "../components/ui/alert.js";
 import { StepShell } from "../components/StepShell.js";
-import { ErrorBanner } from "../components/ErrorBanner.js";
 
 const DESIGNER_URL = "https://ui.shadcn.com/create";
 
@@ -36,25 +36,21 @@ export function PresetPaste({ onSubmit }: PresetPasteProps) {
   };
 
   return (
-    <StepShell
-      title="Paste a preset code"
-      subtitle={`Open ${DESIGNER_URL}, design, copy the preset code, paste below. Press 'o' to open the designer.`}
-    >
-      <Box>
-        <Text>{"> "}</Text>
-        <TextInput
-          value={value}
-          onChange={(v) => {
-            setValue(v);
-            if (error) setError(null);
-          }}
-          onSubmit={handleSubmit}
-          placeholder="bxyz123"
-        />
-      </Box>
-      {error ? <ErrorBanner message={error} /> : null}
+    <StepShell>
+      <TextInput
+        autoFocus
+        id="preset-paste"
+        value={value}
+        onChange={(v) => {
+          setValue(v);
+          if (error) setError(null);
+        }}
+        onSubmit={handleSubmit}
+        placeholder="bxyz123"
+      />
+      {error ? <Alert variant="error">{error}</Alert> : null}
       {openError ? (
-        <ErrorBanner message={`Could not open browser: ${openError}`} />
+        <Alert variant="error">{`Could not open browser: ${openError}`}</Alert>
       ) : null}
     </StepShell>
   );

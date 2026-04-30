@@ -55,6 +55,7 @@ describe.skipIf(!E2E_ENABLED)('e2e: skip path', () => {
     });
 
     await send(`${projectName}\r`, 200); // project name
+    await send('\r', 200); // framework: accept Next.js default
     // Navigate to "Skip" in preset-choice (3 down arrows then enter)
     await send('[B', 100);
     await send('[B', 100);
@@ -63,6 +64,7 @@ describe.skipIf(!E2E_ENABLED)('e2e: skip path', () => {
     await send('\r', 200); // components (no toggles)
     await send('\r', 200); // registries
     await send('n\r', 200); // skills no
+    await send('\r', 200); // init-options: accept defaults
     // install runs; then done.
     const exitCode = await Promise.race([
       done,

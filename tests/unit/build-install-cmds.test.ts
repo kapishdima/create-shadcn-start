@@ -19,13 +19,24 @@ beforeAll(async () => {
 
 const ready = () => Boolean(build);
 
+const DEFAULT_INIT_OPTIONS = {
+  monorepo: false,
+  pointer: false,
+  rtl: false,
+  srcDir: false,
+  cssVariables: true,
+  baseStyle: true,
+};
+
 const baseState = (overrides: Partial<Record<string, unknown>> = {}) => ({
   projectName: 'demo',
+  frameworkTemplate: 'next',
   presetSource: 'curated',
   presetCode: 'aIkeymG',
   components: [] as string[],
   registries: [] as string[],
   installShadcnSkill: false,
+  initOptions: DEFAULT_INIT_OPTIONS,
   ...overrides,
 });
 
@@ -97,6 +108,57 @@ describe('build-install-cmds', () => {
       cs.some((c) => c.argv.some((a) => /skills/.test(a)));
     expect(hasSkill(withSkill)).toBe(true);
     expect(hasSkill(withoutSkill)).toBe(false);
+  });
+
+  it('init argv contains --template <framework>', () => {
+    if (!ready()) return;
+    const cmds = build!(baseState({ frameworkTemplate: 'vite' }), 'pnpm');
+    const init = cmds[0]!;
+    expect(init.argv).toContain('--template');
+    const idx = init.argv.indexOf('--template');
+    expect(init.argv[idx + 1]).toBe('vite');
+  });
+
+  it('default init options produce no extra init flags', () => {
+    if (!ready()) return;
+    const cmds = build!(baseState(), 'pnpm');
+    const init = cmds[0]!;
+    expect(init.argv).not.toContain('--monorepo');
+    expect(init.argv).not.toContain('--pointer');
+    expect(init.argv).not.toContain('--rtl');
+    expect(init.argv).not.toContain('--src-dir');
+    expect(init.argv).not.toContain('--no-css-variables');
+    expect(init.argv).not.toContain('--no-base-style');
+  });
+
+  it('init options with srcDir + rtl emit both --src-dir and --rtl', () => {
+    if (!ready()) return;
+    const cmds = build!(
+      baseState({
+        initOptions: { ...DEFAULT_INIT_OPTIONS, srcDir: true, rtl: true },
+      }),
+      'pnpm',
+    );
+    const init = cmds[0]!;
+    expect(init.argv).toContain('--src-dir');
+    expect(init.argv).toContain('--rtl');
+  });
+
+  it('init options with cssVariables=false and baseStyle=false emit --no- flags', () => {
+    if (!ready()) return;
+    const cmds = build!(
+      baseState({
+        initOptions: {
+          ...DEFAULT_INIT_OPTIONS,
+          cssVariables: false,
+          baseStyle: false,
+        },
+      }),
+      'pnpm',
+    );
+    const init = cmds[0]!;
+    expect(init.argv).toContain('--no-css-variables');
+    expect(init.argv).toContain('--no-base-style');
   });
 
   it('PM dlx prefixes: pnpm dlx, npx, yarn dlx, bunx', () => {

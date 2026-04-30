@@ -1,222 +1,102 @@
 [
   {
-    "name": "Sunset",
-    "description": "Warm orange tones over a stone neutral base.",
-    "code": "bubYSGm",
+    "name": "MiniMax",
+    "description": "Bright mist canvas, brand-blue action, pill-and-card geometry",
+    "code": "b2tqYzpa88",
     "swatch": [
-      "#fff7ed",
-      "#fed7aa",
-      "#f97316",
-      "#7c2d12"
+      "#193cb8",
+      "#d9d3d5",
+      "#1d191a"
     ]
   },
   {
-    "name": "Mono",
+    "name": "shadcn liked #2",
     "description": "Clean monochrome zinc palette for utilitarian dashboards.",
-    "code": "batqwS",
+    "code": "b4ZVZIPi9h",
     "swatch": [
-      "#fafafa",
-      "#e4e4e7",
-      "#71717a",
-      "#18181b"
+      "#e8e4e5",
+      "#ff6900",
+      "#1D1816"
     ]
   },
   {
-    "name": "Brutalist",
+    "name": "shadcn liked #4",
     "description": "Hard edges, neutral surfaces, bold red accents.",
-    "code": "b1oaDrdY",
+    "code": "b5HCiD38",
     "swatch": [
-      "#fef2f2",
-      "#fecaca",
-      "#ef4444",
-      "#7f1d1d"
+      "#963C00",
+      "#1D1816",
+      "#7C6D67"
     ]
   },
   {
-    "name": "Aurora",
+    "name": "shadcn liked #3",
     "description": "Mauve canvas with fuchsia and rounded corners.",
-    "code": "b1EDa1WC",
+    "code": "b4aRK5K0",
     "swatch": [
-      "#fdf4ff",
-      "#f5d0fe",
-      "#d946ef",
-      "#701a75"
+      "#006145",
+      "#1D161F",
+      "#FA2B36"
     ]
   },
   {
-    "name": "Forest",
+    "name": "shadcn liked #1",
     "description": "Olive base with emerald accents for outdoor brands.",
-    "code": "bd08n8i",
+    "code": "b6tOz2I0",
     "swatch": [
-      "#ecfdf5",
-      "#a7f3d0",
-      "#10b981",
-      "#064e3b"
+      "#E9E8E3",
+      "#1D1D16",
+      "#7C7C67"
     ]
   },
   {
-    "name": "Ocean",
+    "name": "shadcn liked #5",
     "description": "Misty greys and cyan for marine UIs.",
-    "code": "bKXMXYW",
+    "code": "b51GFh7y",
     "swatch": [
-      "#ecfeff",
-      "#a5f3fc",
-      "#06b6d4",
-      "#164e63"
+      "#A50035",
+      "#FF2056",
+      "#161A1D"
     ]
   },
   {
-    "name": "Sand",
+    "name": "shadcn liked #6",
     "description": "Taupe and amber for warm marketing surfaces.",
-    "code": "b1XpbaiW",
+    "code": "b3Zheoix",
     "swatch": [
-      "#fffbeb",
-      "#fde68a",
-      "#f59e0b",
-      "#78350f"
+      "#006145",
+      "#00B8DB",
+      "#1C1918"
     ]
   },
   {
-    "name": "Glacier",
+    "name": "shadcn liked #7",
     "description": "Cool gray base with sky accents and sharp corners.",
-    "code": "bxKABU",
+    "code": "b1aIuQ2X",
     "swatch": [
-      "#f0f9ff",
-      "#bae6fd",
-      "#0ea5e9",
-      "#0c4a6e"
+      "#2A7FFF",
+      "#1A3BB8",
+      "#1C1918"
     ]
   },
   {
-    "name": "Plum",
+    "name": "shadcn liked #8",
     "description": "Mauve neutrals paired with deep purple actions.",
-    "code": "bvUcdVI",
+    "code": "b1x9M2c4",
     "swatch": [
-      "#faf5ff",
-      "#e9d5ff",
-      "#a855f7",
-      "#581c87"
+      "#F0B100",
+      "#FD9900",
+      "#1D1816"
     ]
   },
   {
-    "name": "Citrus",
+    "name": "shadcn liked #9",
     "description": "Stone and lime with subtle radius.",
     "code": "b1DLvptw",
     "swatch": [
-      "#f7fee7",
-      "#d9f99d",
-      "#84cc16",
-      "#365314"
-    ]
-  },
-  {
-    "name": "Slate Pro",
-    "description": "Zinc neutrals with deep blue accents for SaaS.",
-    "code": "bbkeIa",
-    "swatch": [
-      "#eff6ff",
-      "#bfdbfe",
-      "#3b82f6",
-      "#1e3a8a"
-    ]
-  },
-  {
-    "name": "Rose Quartz",
-    "description": "Neutral surface with rose accents and large radius.",
-    "code": "b1VpqU2S",
-    "swatch": [
-      "#fff1f2",
-      "#fecdd3",
-      "#f43f5e",
-      "#881337"
-    ]
-  },
-  {
-    "name": "Midnight",
-    "description": "Zinc with indigo for after-dark dashboards.",
-    "code": "b1p98WeW",
-    "swatch": [
-      "#eef2ff",
-      "#c7d2fe",
-      "#6366f1",
-      "#312e81"
-    ]
-  },
-  {
-    "name": "Mint",
-    "description": "Olive and green for fresh, calm products.",
-    "code": "bd0hzOq",
-    "swatch": [
-      "#f0fdf4",
-      "#bbf7d0",
-      "#22c55e",
-      "#14532d"
-    ]
-  },
-  {
-    "name": "Coral",
-    "description": "Stone neutral with pink accents.",
-    "code": "bubq3Oq",
-    "swatch": [
-      "#fdf2f8",
-      "#fbcfe8",
-      "#ec4899",
-      "#831843"
-    ]
-  },
-  {
-    "name": "Teal Studio",
-    "description": "Misty surface with teal CTA color.",
-    "code": "bKalj4C",
-    "swatch": [
-      "#f0fdfa",
-      "#99f6e4",
-      "#14b8a6",
-      "#134e4a"
-    ]
-  },
-  {
-    "name": "Goldenrod",
-    "description": "Taupe paper and yellow highlights.",
-    "code": "b1Xu9Aoa",
-    "swatch": [
-      "#fefce8",
-      "#fef08a",
-      "#eab308",
-      "#713f12"
-    ]
-  },
-  {
-    "name": "Iris",
-    "description": "Mauve neutrals with violet primary.",
-    "code": "b1EGhbwu",
-    "swatch": [
-      "#f5f3ff",
-      "#ddd6fe",
-      "#8b5cf6",
-      "#4c1d95"
-    ]
-  },
-  {
-    "name": "Graphite",
-    "description": "Gray on gray, no radius, technical feel.",
-    "code": "btLmNc",
-    "swatch": [
-      "#f9fafb",
-      "#e5e7eb",
-      "#6b7280",
-      "#111827"
-    ]
-  },
-  {
-    "name": "Editorial",
-    "description": "Neutral surfaces with amber highlights for long-form reading.",
-    "code": "b1oX6HDs",
-    "swatch": [
-      "#fffbeb",
-      "#fde68a",
-      "#f59e0b",
-      "#78350f"
+      "#9E0712",
+      "#737373",
+      "#181818"
     ]
   }
 ]

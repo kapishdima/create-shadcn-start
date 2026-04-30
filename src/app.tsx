@@ -2,15 +2,17 @@ import React, { useEffect, useRef } from "react";
 import { Box, useApp, useInput } from "ink";
 import { useMachine } from "@xstate/react";
 import {
-  footerModeFor,
   getSceneMeta,
+  getStepSummary,
   wizardMachine,
-  type Step,
   type WizardContext,
 } from "./machine.js";
+
 import { detectPm } from "./utils/detect-pm.js";
-import { Footer } from "./components/Footer.js";
+import { SetupFlow } from "./components/ui/setup-flow.js";
+import { Welcome } from "./components/ui/welcome.js";
 import { ProjectName } from "./steps/project-name.js";
+import { Framework } from "./steps/framework.js";
 import { PresetChoice } from "./steps/preset-choice.js";
 import { PresetCurated } from "./steps/preset-curated.js";
 import { PresetRandom } from "./steps/preset-random.js";
@@ -18,8 +20,8 @@ import { PresetPaste } from "./steps/preset-paste.js";
 import { Components } from "./steps/components.js";
 import { Registries } from "./steps/registries.js";
 import { Skills } from "./steps/skills.js";
+import { InitOptionsStep } from "./steps/init-options.js";
 import { Review } from "./steps/review.js";
-import { StepHeader } from "./components/StepHeader.js";
 
 export type AppOutcome =
   | { kind: "install"; ctx: WizardContext }
@@ -38,6 +40,9 @@ export function App({ initialProjectName, onComplete }: AppProps = {}) {
   });
   const { exit } = useApp();
   const completedRef = useRef(false);
+   
+  const step = state.value
+  const ctx = state.context;
 
   useInput((_input, key) => {
     if (key.escape) {
@@ -45,11 +50,6 @@ export function App({ initialProjectName, onComplete }: AppProps = {}) {
       return;
     }
   });
-
-  const step = state.value as Step;
-  const ctx = state.context;
-  const meta = getSceneMeta(step);
-  const mode = footerModeFor(step);
 
   useEffect(() => {
     if (step === "install" && !completedRef.current) {
@@ -59,7 +59,7 @@ export function App({ initialProjectName, onComplete }: AppProps = {}) {
     }
   }, [step, ctx, onComplete, exit]);
 
-  const renderStep = () => {
+  const renderActive = () => {
     switch (step) {
       case "project-name":
         return (
@@ -67,6 +67,15 @@ export function App({ initialProjectName, onComplete }: AppProps = {}) {
             initialValue={ctx.projectName}
             onSubmit={(projectName) =>
               send({ type: "SUBMIT_PROJECT_NAME", projectName })
+            }
+          />
+        );
+      case "framework":
+        return (
+          <Framework
+            initial={ctx.frameworkTemplate}
+            onSubmit={(framework) =>
+              send({ type: "SUBMIT_FRAMEWORK", framework })
             }
           />
         );
@@ -133,6 +142,15 @@ export function App({ initialProjectName, onComplete }: AppProps = {}) {
             }
           />
         );
+      case "init-options":
+        return (
+          <InitOptionsStep
+            initial={ctx.initOptions}
+            onSubmit={(initOptions) =>
+              send({ type: "SUBMIT_INIT_OPTIONS", initOptions })
+            }
+          />
+        );
       case "review":
         return (
           <Review
@@ -147,11 +165,26 @@ export function App({ initialProjectName, onComplete }: AppProps = {}) {
   };
 
   return (
-    <Box flexDirection="column">
-      {renderStep()}
-      {step !== "install" ? (
-        <Footer mode={mode} backAllowed={meta?.backAllowed ?? true} />
-      ) : null}
+    <Box flexDirection="column" paddingTop={1}>
+  
+      <SetupFlow>
+        {ctx.history.filter((step) => !getSceneMeta(step)?.isSubScene).map((step, stepIndex) => {
+          const isActive = stepIndex === ctx.history.length - 1;
+          const summary = isActive ? null : getStepSummary(step, ctx);
+          const meta = getSceneMeta(step);
+
+          return (
+            <SetupFlow.Step
+              key={stepIndex}
+              status={isActive ? "active" : "done"}
+              title={`${meta?.title}${summary ? `: ${summary}` : ""}`}
+              description={meta?.description}
+            />
+          );
+        })}
+        {renderActive()}
+      </SetupFlow>
     </Box>
   );
 }
+

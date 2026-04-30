@@ -31,10 +31,7 @@ export function PresetCurated({ onSubmit }: PresetCuratedProps) {
   }));
 
   return (
-    <StepShell
-      title="Curated presets"
-      subtitle="Up/Down to browse, Enter to confirm. Swatches are bg / surface / accent / ink."
-    >
+    <StepShell>
       <SelectInput
         items={items}
         limit={10}

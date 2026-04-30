@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { Box, Text } from "ink";
-import TextInput from "ink-text-input";
+import { TextInput } from "../components/ui/text-input.js";
+import { Alert } from "../components/ui/alert.js";
 import { StepShell } from "../components/StepShell.js";
-import { ErrorBanner } from "../components/ErrorBanner.js";
 import { validateProjectName } from "../utils/validate-project-name.js";
 
 export type ProjectNameProps = {
@@ -27,23 +26,20 @@ export function ProjectName({ initialValue, cwd, onSubmit }: ProjectNameProps) {
   };
 
   return (
-    <StepShell
-      title="Project name"
-      subtitle="Used as the directory name. Lowercase kebab-case."
-    >
-      <Box>
-        <Text>{"> "}</Text>
-        <TextInput
-          value={value}
-          onChange={(v) => {
-            setValue(v);
-            if (error) setError(null);
-          }}
-          onSubmit={handleSubmit}
-          placeholder="my-shadcn-app"
-        />
-      </Box>
-      {error ? <ErrorBanner message={error} /> : null}
+    <StepShell>
+      <TextInput
+        autoFocus
+        id="project-name"
+        value={value}
+        onChange={(v) => {
+          setValue(v);
+          if (error) setError(null);
+        }}
+        onSubmit={handleSubmit}
+        placeholder="my-shadcn-app"
+        bordered={false}
+      />
+      {error ? <Alert variant="error">{error}</Alert> : null}
     </StepShell>
   );
 }

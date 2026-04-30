@@ -4,6 +4,7 @@ import { render } from 'ink-testing-library';
 
 const stepFiles = [
   'project-name',
+  'framework',
   'preset-choice',
   'preset-curated',
   'preset-random',
@@ -11,6 +12,7 @@ const stepFiles = [
   'components',
   'registries',
   'skills',
+  'init-options',
   'review',
   'done',
 ];
@@ -21,12 +23,21 @@ const fixtureState = {
   pm: 'pnpm' as const,
   cwd: '/tmp/test',
   projectName: 'demo',
+  frameworkTemplate: 'next' as const,
   presetSource: 'curated' as const,
   presetCode: 'aIkeymG',
   components: ['button'],
   registries: [],
   customRegistries: [],
   installShadcnSkill: true,
+  initOptions: {
+    monorepo: false,
+    pointer: false,
+    rtl: false,
+    srcDir: false,
+    cssVariables: true,
+    baseStyle: true,
+  },
   installExitCode: 1,
   installFailedCmdLabel: 'shadcn init',
   installTail: ['line one'],

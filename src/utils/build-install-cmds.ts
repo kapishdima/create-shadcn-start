@@ -1,5 +1,9 @@
 import { join } from "node:path";
-import type { WizardContext as State } from "../machine.js";
+import {
+  DEFAULT_INIT_OPTIONS,
+  type InitOptions,
+  type WizardContext as State,
+} from "../machine.js";
 import type { PM } from "./detect-pm.js";
 
 export type Cmd = {
@@ -40,12 +44,14 @@ function dlxPrefix(pm: PM): string[] {
 export function buildInstallCmds(
   stateLike: Partial<State> & {
     projectName?: string;
+    frameworkTemplate?: string;
     presetSource?: string;
     presetCode?: string;
     components?: string[];
     registries?: string[];
     customRegistries?: string[];
     installShadcnSkill?: boolean;
+    initOptions?: InitOptions;
   },
   pm: PM | string,
   cwd: string = process.cwd()
@@ -64,16 +70,22 @@ export function buildInstallCmds(
   const cmds: Cmd[] = [];
 
   // 1. init
+  const template = stateLike.frameworkTemplate ?? "next";
+  const opts = stateLike.initOptions ?? DEFAULT_INIT_OPTIONS;
   const initArgs: string[] = [
     "shadcn@latest",
     "init",
     "--name",
     projectName,
-    // "--template",
-    // "next",
-    // "--yes",
-    // "--no-monorepo",
+    "--template",
+    template,
   ];
+  if (opts.monorepo) initArgs.push("--monorepo");
+  if (opts.pointer) initArgs.push("--pointer");
+  if (opts.rtl) initArgs.push("--rtl");
+  if (opts.srcDir) initArgs.push("--src-dir");
+  if (!opts.cssVariables) initArgs.push("--no-css-variables");
+  if (!opts.baseStyle) initArgs.push("--no-base-style");
   if (stateLike.presetSource !== "skip" && stateLike.presetCode) {
     initArgs.push("--preset", stateLike.presetCode);
   } else {
@@ -96,7 +108,7 @@ export function buildInstallCmds(
   for (const reg of allRegistries) {
     cmds.push({
       pm: resolvedPm,
-      argv: [...dlx, "shadcn@latest", "registry", "add", "--yes", reg],
+      argv: [...dlx, "shadcn@latest", "registry", "add", reg],
       cwd: projectDir,
     });
   }

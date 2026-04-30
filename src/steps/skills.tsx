@@ -16,10 +16,7 @@ export function Skills({ initial = true, onSubmit }: SkillsProps) {
   const initialIndex = initial ? 0 : 1;
 
   return (
-    <StepShell
-      title="Agent skill"
-      subtitle="Install the shadcn agent skill for Claude Code / Cursor / etc.?"
-    >
+    <StepShell>
       <SelectInput
         items={ITEMS}
         initialIndex={initialIndex}

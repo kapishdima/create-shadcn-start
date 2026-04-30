@@ -50,6 +50,7 @@ describe.skipIf(!E2E_ENABLED)('e2e: bad-paste recovery', () => {
     });
 
     await send(`${projectName}\r`, 200);
+    await send('\r', 200); // framework: accept Next.js default
     // Move down twice to get to "Custom" / paste branch
     await send('[B', 100);
     await send('[B', 100);
@@ -61,6 +62,7 @@ describe.skipIf(!E2E_ENABLED)('e2e: bad-paste recovery', () => {
     await send('\r', 200); // components
     await send('\r', 200); // registries
     await send('n\r', 200); // skills no
+    await send('\r', 200); // init-options: accept defaults
 
     const exitCode = await Promise.race([
       done,

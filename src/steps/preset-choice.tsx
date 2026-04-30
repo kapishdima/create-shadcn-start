@@ -19,10 +19,7 @@ export function PresetChoice({ initial, onSubmit }: PresetChoiceProps) {
   const initialIndex = initial ? ITEMS.findIndex((i) => i.value === initial) : 0;
 
   return (
-    <StepShell
-      title="Theme preset"
-      subtitle="Choose a starting palette and typography."
-    >
+    <StepShell>
       <SelectInput
         items={ITEMS}
         initialIndex={initialIndex < 0 ? 0 : initialIndex}

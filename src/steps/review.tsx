@@ -2,7 +2,7 @@ import React from "react";
 import { Box, Text, useStdout } from "ink";
 import SelectInput from "ink-select-input";
 import { StepShell } from "../components/StepShell.js";
-import type { WizardContext } from "../machine.js";
+import { summarizeInitOptions, type WizardContext } from "../machine.js";
 
 export type ReviewProps = {
   ctx: WizardContext;
@@ -61,15 +61,22 @@ export function Review({ ctx, onConfirm, onBack }: ReviewProps) {
         );
 
   const skillDisplay = ctx.installShadcnSkill ? "yes" : "no";
+  const frameworkDisplay = ctx.frameworkTemplate ?? "next";
+  const initOptionsDisplay = truncate(
+    summarizeInitOptions(ctx.initOptions),
+    maxValue,
+  );
 
   return (
-    <StepShell title="Review" subtitle="Confirm your choices before installing.">
+    <StepShell>
       <Box flexDirection="column" marginBottom={1}>
         <Row label="Project name" value={ctx.projectName ?? "(not set)"} />
+        <Row label="Framework" value={frameworkDisplay} />
         <Row label="Preset" value={truncate(presetDisplay, maxValue)} />
         <Row label="Components" value={componentsDisplay} />
         <Row label="Registries" value={registriesDisplay} />
         <Row label="Shadcn skill" value={skillDisplay} />
+        <Row label="Init options" value={initOptionsDisplay} />
       </Box>
       <SelectInput
         items={ACTIONS}

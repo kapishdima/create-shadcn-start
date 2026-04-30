@@ -50,12 +50,14 @@ describe.skipIf(!E2E_ENABLED)('e2e: random preset', () => {
     });
 
     await send(`${projectName}\r`, 200);
+    await send('\r', 200); // framework: accept Next.js default
     await send('[B', 100); // move from Curated -> Random
     await send('\r', 200); // pick Random
     await send('\r', 200); // accept first generation
     await send('\r', 200); // empty components
     await send('\r', 200); // empty registries
     await send('n\r', 200); // skills no
+    await send('\r', 200); // init-options: accept defaults
 
     const exitCode = await Promise.race([
       done,

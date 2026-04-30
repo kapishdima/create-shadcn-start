@@ -1,7 +1,7 @@
 import React from "react";
-import { MultiSelect } from "@inkjs/ui";
 import componentsData from "../data/components.json" with { type: "json" };
 import { StepShell } from "../components/StepShell.js";
+import { MultiSelectStep } from "../components/MultiSelectStep.js";
 
 export type ComponentEntry = {
   name: string;
@@ -17,22 +17,23 @@ export type ComponentsProps = {
 const ALL: ComponentEntry[] = componentsData as ComponentEntry[];
 
 export function Components({ initial, onSubmit }: ComponentsProps) {
-  const options = ALL.map((c) => ({ label: c.name, value: c.name }));
+  const options = ALL.map((c) => ({
+    value: c.name,
+    label: c.name,
+    hint: c.description,
+  }));
 
-  const defaultValue =
+  const defaultSelected =
     initial && initial.length > 0
       ? initial
       : ALL.filter((c) => c.default).map((c) => c.name);
 
   return (
-    <StepShell
-      title="Components"
-      subtitle="Space to toggle, Enter to confirm. Defaults pre-checked."
-    >
-      <MultiSelect
+    <StepShell>
+      <MultiSelectStep
         options={options}
-        defaultValue={defaultValue}
-        visibleOptionCount={12}
+        defaultSelected={defaultSelected}
+        visibleCount={12}
         onSubmit={onSubmit}
       />
     </StepShell>
