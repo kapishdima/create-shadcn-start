@@ -2,6 +2,10 @@
   "name": "create-shadcn-start",
   "version": "0.0.2",
   "description": "Interactive scaffolder for shadcn-based projects",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kapishdima/create-shadcn-start.git"
+  },
   "type": "module",
   "bin": {
     "create-shadcn-start": "./dist/index.js"
