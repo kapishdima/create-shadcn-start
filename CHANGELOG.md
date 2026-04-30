@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.0.5
+
+### Patch Changes
+
+- [`ef25366`](https://github.com/kapishdima/create-shadcn-start/commit/ef25366bca57f731091fbf998012a7243c817316) Thanks [@DimaDevelopment](https://github.com/DimaDevelopment)! - fix shadncn preset
+
 ## 0.0.4
 
 ### Patch Changes
