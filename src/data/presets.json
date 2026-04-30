@@ -10,8 +10,8 @@
     ]
   },
   {
-    "name": "shadcn liked #2",
-    "description": "Clean monochrome zinc palette for utilitarian dashboards.",
+    "name": "Ember Mist",
+    "description": "Pearl mist canvas, electric orange action, espresso ink",
     "code": "b4ZVZIPi9h",
     "swatch": [
       "#e8e4e5",
@@ -20,8 +20,8 @@
     ]
   },
   {
-    "name": "shadcn liked #4",
-    "description": "Hard edges, neutral surfaces, bold red accents.",
+    "name": "Sienna",
+    "description": "Burnt rust action, warm taupe shade, charcoal ink",
     "code": "b5HCiD38",
     "swatch": [
       "#963C00",
@@ -30,8 +30,8 @@
     ]
   },
   {
-    "name": "shadcn liked #3",
-    "description": "Mauve canvas with fuchsia and rounded corners.",
+    "name": "Holly",
+    "description": "Forest emerald base, crimson alert, midnight plum ink",
     "code": "b4aRK5K0",
     "swatch": [
       "#006145",
@@ -40,8 +40,8 @@
     ]
   },
   {
-    "name": "shadcn liked #1",
-    "description": "Olive base with emerald accents for outdoor brands.",
+    "name": "Linen",
+    "description": "Bone canvas, olive shade, charcoal ink",
     "code": "b6tOz2I0",
     "swatch": [
       "#E9E8E3",
@@ -50,8 +50,8 @@
     ]
   },
   {
-    "name": "shadcn liked #5",
-    "description": "Misty greys and cyan for marine UIs.",
+    "name": "Garnet",
+    "description": "Garnet base, coral pink action, slate ink",
     "code": "b51GFh7y",
     "swatch": [
       "#A50035",
@@ -60,8 +60,8 @@
     ]
   },
   {
-    "name": "shadcn liked #6",
-    "description": "Taupe and amber for warm marketing surfaces.",
+    "name": "Lagoon",
+    "description": "Emerald base, cyan reef accent, charcoal ink",
     "code": "b3Zheoix",
     "swatch": [
       "#006145",
@@ -70,8 +70,8 @@
     ]
   },
   {
-    "name": "shadcn liked #7",
-    "description": "Cool gray base with sky accents and sharp corners.",
+    "name": "Cobalt",
+    "description": "Bright cobalt action, deep indigo accent, near-black ink",
     "code": "b1aIuQ2X",
     "swatch": [
       "#2A7FFF",
@@ -80,8 +80,8 @@
     ]
   },
   {
-    "name": "shadcn liked #8",
-    "description": "Mauve neutrals paired with deep purple actions.",
+    "name": "Marigold",
+    "description": "Marigold gold accent, amber action, espresso ink",
     "code": "b1x9M2c4",
     "swatch": [
       "#F0B100",
@@ -90,12 +90,12 @@
     ]
   },
   {
-    "name": "shadcn liked #9",
-    "description": "Stone and lime with subtle radius.",
-    "code": "b1DLvptw",
+    "name": "Dreamy",
+    "description": "Editorial crimson accent, concrete grey shade, jet ink",
+    "code": "b7QDHijU",
     "swatch": [
-      "#9E0712",
-      "#737373",
+      "#016730",
+      "#71717C",
       "#181818"
     ]
   }

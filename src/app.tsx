@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Box, useApp, useInput } from "ink";
+import { Box, useApp, useInput, useStdout } from "ink";
 import { useMachine } from "@xstate/react";
 import {
   getSceneMeta,
@@ -39,8 +39,9 @@ export function App({ initialProjectName, onComplete }: AppProps = {}) {
     input: { pm, cwd, projectName: initialProjectName },
   });
   const { exit } = useApp();
+  const { stdout } = useStdout();
   const completedRef = useRef(false);
-   
+
   const step = state.value
   const ctx = state.context;
 
@@ -172,12 +173,19 @@ export function App({ initialProjectName, onComplete }: AppProps = {}) {
           const isActive = stepIndex === ctx.history.length - 1;
           const summary = isActive ? null : getStepSummary(step, ctx);
           const meta = getSceneMeta(step);
+          const columns = stdout?.columns ?? 80;
+          const titleBudget = Math.max(20, columns - 6);
+          const rawTitle = `${meta?.title}${summary ? `: ${summary}` : ""}`;
+          const title =
+            rawTitle.length > titleBudget
+              ? rawTitle.slice(0, Math.max(1, titleBudget - 1)) + "…"
+              : rawTitle;
 
           return (
             <SetupFlow.Step
               key={stepIndex}
               status={isActive ? "active" : "done"}
-              title={`${meta?.title}${summary ? `: ${summary}` : ""}`}
+              title={title}
               description={meta?.description}
             />
           );

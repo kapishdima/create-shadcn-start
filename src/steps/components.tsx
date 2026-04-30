@@ -34,6 +34,7 @@ export function Components({ initial, onSubmit }: ComponentsProps) {
         options={options}
         defaultSelected={defaultSelected}
         visibleCount={12}
+        enableToggleAll
         onSubmit={onSubmit}
       />
     </StepShell>

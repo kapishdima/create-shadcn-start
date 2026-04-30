@@ -35,10 +35,6 @@ export function Done({ projectName, pm, onExit, projectDir }: DoneProps) {
       <Text>
         Project ready at <Text color={theme.success}>{dir}</Text>
       </Text>
-      <Box borderStyle="round" paddingX={1} flexDirection="column" marginTop={1}>
-        <Text>cd {projectName}</Text>
-        <Text>{devCommand(pm)}</Text>
-      </Box>
     </Box>
   );
 }

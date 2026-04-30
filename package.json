@@ -1,10 +1,10 @@
 {
-  "name": "create-shadcn-app",
+  "name": "create-shadcn-start",
   "version": "0.0.1",
   "description": "Interactive scaffolder for shadcn-based projects",
   "type": "module",
   "bin": {
-    "create-shadcn-app": "./dist/index.js"
+    "create-shadcn-start": "./dist/index.js"
   },
   "engines": {
     "node": ">=20"

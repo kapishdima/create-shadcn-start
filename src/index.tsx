@@ -11,7 +11,7 @@ let initialProjectName: string | undefined;
 if (positional) {
   const err = validateProjectName(positional, process.cwd());
   if (err) {
-    process.stderr.write(`create-shadcn-app: ${err}\n`);
+    process.stderr.write(`create-shadcn-start: ${err}\n`);
     process.exit(1);
   }
   initialProjectName = positional;
@@ -39,7 +39,7 @@ const result = await runInstall(ctx);
 
 if (!result.ok) {
   process.stderr.write(
-    `\ncreate-shadcn-app: install failed at ${result.failedCmdLabel} (exit ${result.exitCode})\n`
+    `\ncreate-shadcn-start: install failed at ${result.failedCmdLabel} (exit ${result.exitCode})\n`
   );
   process.exit(result.exitCode);
 }

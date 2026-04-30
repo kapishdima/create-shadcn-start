@@ -14,7 +14,7 @@ export type RegistryEntry = {
 };
 
 export type RegistriesProps = {
-  onSubmit: (selectedUrls: string[], customRegistries: string[]) => void;
+  onSubmit: (selectedNames: string[], customRegistries: string[]) => void;
 };
 
 const ALL: RegistryEntry[] = registriesData as RegistryEntry[];
@@ -48,7 +48,7 @@ export function Registries({ onSubmit }: RegistriesProps) {
     );
     return [
       ...ALL.map((r) => ({
-        value: r.url,
+        value: r.name,
         label: `${r.name.padEnd(maxName, " ")}${NAME_DESC_SEP}${truncate(
           r.description,
           descBudget,
@@ -60,12 +60,12 @@ export function Registries({ onSubmit }: RegistriesProps) {
 
   const handleSubmit = (values: string[]) => {
     const wantsPaste = values.includes(PASTE_VALUE);
-    const urls = values.filter((v) => v !== PASTE_VALUE);
-    setPendingUrls(urls);
+    const names = values.filter((v) => v !== PASTE_VALUE);
+    setPendingUrls(names);
     if (wantsPaste) {
       setMode("paste");
     } else {
-      onSubmit(urls, []);
+      onSubmit(names, []);
     }
   };
 

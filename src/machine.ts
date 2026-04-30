@@ -1,6 +1,5 @@
 import { assign, setup } from "xstate";
 import type { PM } from "./utils/detect-pm.js";
-import registriesData from "./data/registries.json" with { type: "json" };
 
 export type Step =
   | "project-name"
@@ -89,9 +88,6 @@ export type WizardEvent =
   | { type: "BACK" };
 
 export const WIZARD_PHASE_TOTAL = 8;
-const REGISTRY_NAME_BY_URL = new Map<string, string>(
-  (registriesData as { name: string; url: string }[]).map((r) => [r.url, r.name]),
-);
 
 export const wizardMachine = setup({
   types: {
@@ -317,7 +313,8 @@ export const wizardMachine = setup({
         backAllowed: true,
         phase: 4,
         title: "Components",
-        description: "Space to toggle, Enter to confirm. Defaults pre-checked.",
+        description:
+          "Space to toggle, A to toggle all, Enter to confirm. Defaults pre-checked.",
       } satisfies SceneMeta,
       on: {
         SUBMIT_COMPONENTS: {
@@ -500,10 +497,7 @@ export function getStepSummary(step: Step, ctx: WizardContext): string | null {
       return ctx.components.join(", ");
     }
     case "registries": {
-      const names = ctx.registries.map(
-        (url) => REGISTRY_NAME_BY_URL.get(url) ?? url,
-      );
-      const all = [...names, ...ctx.customRegistries];
+      const all = [...ctx.registries, ...ctx.customRegistries];
       if (all.length === 0) return "none";
       return all.join(", ");
     }

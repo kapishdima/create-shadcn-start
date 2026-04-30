@@ -1,14 +1,14 @@
-# create-shadcn-app
+# create-shadcn-start
 
 Interactive scaffolder for shadcn-based projects.
 
 ## Quick start
 
 ```
-npm create shadcn-app@latest
-pnpm create shadcn-app
-yarn create shadcn-app
-bunx create-shadcn-app
+npm create shadcn-start@latest
+pnpm create shadcn-start
+yarn create shadcn-start
+bunx create-shadcn-start
 ```
 
 Pick whichever matches your package manager. The CLI auto-detects which one invoked it and uses the same one for the rest of the install.

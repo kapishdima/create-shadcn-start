@@ -119,7 +119,7 @@ const SetupFlowStep = ({
       </Text>
       <Box flexDirection="column">
         <Text dimColor={dim}>{title}</Text>
-        {description && <Text dimColor={dim}>{description}</Text>}
+        {(description && status !== 'done') && <Text dimColor={dim}>{description}</Text>}
       </Box>
     </Box>
   );

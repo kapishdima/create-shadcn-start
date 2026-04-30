@@ -9,7 +9,7 @@ export function Welcome() {
       <Text color={theme.colors.primary}>{"╱╱ "}</Text>
       <Text bold>shadcn/ui</Text>
       <Text color={theme.colors.mutedForeground} dimColor>
-        {"  ·  create-shadcn-app"}
+        {"  ·  create-shadcn-start"}
       </Text>
     </Box>
   );

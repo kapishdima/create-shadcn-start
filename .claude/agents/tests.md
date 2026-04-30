@@ -5,7 +5,7 @@ tools: Read, Write, Edit, Bash, Grep, Glob
 model: sonnet
 ---
 
-You are the testing agent for `create-shadcn-app`.
+You are the testing agent for `create-shadcn-start`.
 
 Read the design plan at `/Users/dev_wandry/.claude/plans/grill-me-silly-wadler.md` first. The "Tests" section is authoritative — it lists every test by name and what it should assert.
 

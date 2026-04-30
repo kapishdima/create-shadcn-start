@@ -26,6 +26,7 @@ export interface SearchInputProps<T = string> {
     | "doubleSingle"
     | "classic";
   paddingX?: number;
+  width?: number | string;
   cursor?: string;
   searchIcon?: string;
   resultCursor?: string;
@@ -45,8 +46,9 @@ export const SearchInput = <T = string,>({
   isActive,
   borderStyle = "round",
   paddingX = 1,
+  width,
   cursor = "█",
-  searchIcon = "🔍 ",
+  searchIcon = "",
   resultCursor = "› ",
 }: SearchInputProps<T>) => {
   const [internalValue, setInternalValue] = useState("");
@@ -154,20 +156,23 @@ export const SearchInput = <T = string,>({
   const hasResults = showResults && filteredResults.length > 0;
 
   return (
-    <Box flexDirection="column">
+    <Box flexDirection="column" width={width}>
       {label && <Text bold>{label}</Text>}
       <Box
         borderStyle={borderStyle}
         borderColor={borderColor}
         paddingX={paddingX}
+        width={width}
       >
-        <Text color={theme.colors.mutedForeground}>{searchIcon}</Text>
+        {isFocused && <Text color={theme.colors.focusRing}>{cursor}</Text>}
+        {searchIcon ? (
+          <Text color={theme.colors.mutedForeground}>{searchIcon}</Text>
+        ) : null}
         <Text
           color={query ? theme.colors.foreground : theme.colors.mutedForeground}
         >
-          {query || placeholder}
+          {(isFocused && cursor ? " " : "") + (query || placeholder)}
         </Text>
-        {isFocused && <Text color={theme.colors.focusRing}>{cursor}</Text>}
       </Box>
       {hasResults && (
         <Box flexDirection="column" paddingLeft={2}>

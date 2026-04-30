@@ -18,6 +18,7 @@ export type MultiSelectStepProps<T extends string = string> = {
   searchable?: boolean;
   searchPlaceholder?: string;
   visibleCount?: number;
+  enableToggleAll?: boolean;
   filterOption?: (option: MultiSelectStepOption<T>, query: string) => boolean;
   onChange?: (values: T[]) => void;
   onSubmit: (values: T[]) => void;
@@ -44,6 +45,7 @@ export function MultiSelectStep<T extends string = string>({
   searchable = false,
   searchPlaceholder = "Search...",
   visibleCount,
+  enableToggleAll = false,
   filterOption = defaultFilter,
   onChange,
   onSubmit,
@@ -87,7 +89,7 @@ export function MultiSelectStep<T extends string = string>({
       {title ? <Text bold>{title}</Text> : null}
       {hint ? <Text color={theme.colors.mutedForeground}>{hint}</Text> : null}
       {searchable ? (
-        <Box marginTop={title || hint ? 1 : 0}>
+        <Box marginTop={title || hint ? 1 : 0} width="100%">
           <SearchInput
             id="multi-select-step-search"
             autoFocus
@@ -95,6 +97,7 @@ export function MultiSelectStep<T extends string = string>({
             value={query}
             onChange={setQuery}
             placeholder={searchPlaceholder}
+            width="100%"
           />
         </Box>
       ) : null}
@@ -105,6 +108,7 @@ export function MultiSelectStep<T extends string = string>({
           value={selected}
           height={visibleCount}
           isActive={focus === "list"}
+          enableToggleAll={enableToggleAll}
           onChange={handleChange}
           onSubmit={handleSubmit}
           onCursorUpAtTop={

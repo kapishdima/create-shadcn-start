@@ -21,6 +21,7 @@ export interface MultiSelectProps<T = string> {
   checkmark?: string;
   height?: number;
   isActive?: boolean;
+  enableToggleAll?: boolean;
 }
 
 export const MultiSelect = <T = string,>({
@@ -33,6 +34,7 @@ export const MultiSelect = <T = string,>({
   checkmark = "◉",
   height,
   isActive = true,
+  enableToggleAll = false,
 }: MultiSelectProps<T>) => {
   const theme = useTheme();
   const [activeIndex, setActiveIndex] = useState(0);
@@ -93,6 +95,16 @@ export const MultiSelect = <T = string,>({
       const next = isSelected
         ? selected.filter((v) => v !== opt.value)
         : [...selected, opt.value];
+      if (controlledValue === undefined) {
+        setInternalSelected(next);
+      }
+      onChange?.(next);
+    } else if (enableToggleAll && (input === "a" || input === "A")) {
+      const enabled = options.filter((o) => !o.disabled);
+      const allSelected =
+        enabled.length > 0 &&
+        enabled.every((o) => selected.includes(o.value));
+      const next: T[] = allSelected ? [] : enabled.map((o) => o.value);
       if (controlledValue === undefined) {
         setInternalSelected(next);
       }
