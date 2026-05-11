@@ -7,6 +7,13 @@ export type InstallResult =
   | { ok: false; exitCode: number; failedCmdLabel: string };
 
 export function deriveCmdLabel(argv: string[]): string {
+  if (argv.includes("@biomejs/biome")) return "biome install";
+  if (argv.includes("biome") && argv.includes("init")) return "biome init";
+  if (argv.some((a) => a === "ultracite" || a.startsWith("ultracite@"))) {
+    return "ultracite init";
+  }
+  if (argv.includes("oxlint")) return "oxlint install";
+
   if (argv.includes("init")) return "shadcn init";
   const addIdx = argv.indexOf("add");
   if (addIdx >= 0) {

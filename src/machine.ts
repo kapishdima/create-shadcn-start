@@ -11,6 +11,7 @@ export type Step =
   | "components"
   | "registries"
   | "skills"
+  | "linter"
   | "init-options"
   | "review"
   | "install";
@@ -23,6 +24,8 @@ export type FrameworkTemplate =
   | "tanstack-start"
   | "astro"
   | "react-router";
+
+export type Linter = "none" | "ultracite" | "biome" | "oxlint";
 
 export type InitOptions = {
   monorepo: boolean;
@@ -64,6 +67,7 @@ export type WizardContext = {
   registries: string[];
   customRegistries: string[];
   installShadcnSkill: boolean;
+  linter: Linter;
   initOptions: InitOptions;
   lastRejected?: BackDisabled;
   autoSkipName: boolean;
@@ -83,11 +87,12 @@ export type WizardEvent =
     customRegistries: string[];
   }
   | { type: "SUBMIT_SKILLS"; installShadcnSkill: boolean }
+  | { type: "SUBMIT_LINTER"; linter: Linter }
   | { type: "SUBMIT_INIT_OPTIONS"; initOptions: InitOptions }
   | { type: "SUBMIT_REVIEW" }
   | { type: "BACK" };
 
-export const WIZARD_PHASE_TOTAL = 8;
+export const WIZARD_PHASE_TOTAL = 9;
 
 export const wizardMachine = setup({
   types: {
@@ -142,6 +147,7 @@ export const wizardMachine = setup({
     registries: [],
     customRegistries: [],
     installShadcnSkill: true,
+    linter: "none",
     initOptions: DEFAULT_INIT_OPTIONS,
     autoSkipName: input.projectName !== undefined,
   }),
@@ -382,22 +388,42 @@ export const wizardMachine = setup({
       } satisfies SceneMeta,
       on: {
         SUBMIT_SKILLS: {
-          target: "init-options",
+          target: "linter",
           actions: [
             assign({
               installShadcnSkill: ({ event }) => event.installShadcnSkill,
             }),
-            { type: "pushHistory", params: { step: "init-options" } },
+            { type: "pushHistory", params: { step: "linter" } },
           ],
         },
         BACK: { target: "registries", actions: "popHistory" },
+      },
+    },
+    linter: {
+      entry: "clearLastRejected",
+      meta: {
+        backAllowed: true,
+        phase: 7,
+        title: "Linter",
+        description:
+          "Pick a linter to scaffold. Choose none to skip.",
+      } satisfies SceneMeta,
+      on: {
+        SUBMIT_LINTER: {
+          target: "init-options",
+          actions: [
+            assign({ linter: ({ event }) => event.linter }),
+            { type: "pushHistory", params: { step: "init-options" } },
+          ],
+        },
+        BACK: { target: "skills", actions: "popHistory" },
       },
     },
     "init-options": {
       entry: "clearLastRejected",
       meta: {
         backAllowed: true,
-        phase: 7,
+        phase: 8,
         title: "Init options",
         description:
           "Space to toggle, Enter to confirm. Defaults match shadcn CLI.",
@@ -410,14 +436,14 @@ export const wizardMachine = setup({
             { type: "pushHistory", params: { step: "review" } },
           ],
         },
-        BACK: { target: "skills", actions: "popHistory" },
+        BACK: { target: "linter", actions: "popHistory" },
       },
     },
     review: {
       entry: "clearLastRejected",
       meta: {
         backAllowed: true,
-        phase: 8,
+        phase: 9,
         title: "Review",
         description: "Confirm your choices before installing.",
       } satisfies SceneMeta,
@@ -503,6 +529,8 @@ export function getStepSummary(step: Step, ctx: WizardContext): string | null {
     }
     case "skills":
       return ctx.installShadcnSkill ? "yes" : "no";
+    case "linter":
+      return ctx.linter;
     case "init-options":
       return summarizeInitOptions(ctx.initOptions);
     case "review":

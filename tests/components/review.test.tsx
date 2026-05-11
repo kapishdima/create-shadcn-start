@@ -16,6 +16,7 @@ const fixtureCtx: WizardContext = {
   registries: ['https://example.com/r'],
   customRegistries: [],
   installShadcnSkill: true,
+  linter: 'none',
   initOptions: DEFAULT_INIT_OPTIONS,
   autoSkipName: false,
 };
