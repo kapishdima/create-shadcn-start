@@ -43,6 +43,9 @@ describe("wizard machine", () => {
     expect(a.getSnapshot().value).toBe("skills");
 
     a.send({ type: "SUBMIT_SKILLS", installShadcnSkill: false });
+    expect(a.getSnapshot().value).toBe("linter");
+
+    a.send({ type: "SUBMIT_LINTER", linter: "none" });
     expect(a.getSnapshot().value).toBe("init-options");
 
     a.send({
@@ -210,7 +213,7 @@ describe("wizard machine", () => {
     expect(a.getSnapshot().context.lastRejected).toBeUndefined();
   });
 
-  it("init-options arrives after skills; SUBMIT_INIT_OPTIONS reaches review; BACK chain works", () => {
+  it("linter arrives after skills; SUBMIT_LINTER reaches init-options; SUBMIT_INIT_OPTIONS reaches review; BACK chain works", () => {
     const a = start();
     a.send({ type: "SUBMIT_PROJECT_NAME", projectName: "demo" });
     a.send({ type: "SUBMIT_FRAMEWORK", framework: "next" });
@@ -219,7 +222,11 @@ describe("wizard machine", () => {
     a.send({ type: "SUBMIT_REGISTRIES", registries: [], customRegistries: [] });
 
     a.send({ type: "SUBMIT_SKILLS", installShadcnSkill: false });
+    expect(a.getSnapshot().value).toBe("linter");
+
+    a.send({ type: "SUBMIT_LINTER", linter: "biome" });
     expect(a.getSnapshot().value).toBe("init-options");
+    expect(a.getSnapshot().context.linter).toBe("biome");
 
     a.send({
       type: "SUBMIT_INIT_OPTIONS",
@@ -231,9 +238,14 @@ describe("wizard machine", () => {
     a.send({ type: "BACK" });
     expect(a.getSnapshot().value).toBe("init-options");
     a.send({ type: "BACK" });
+    expect(a.getSnapshot().value).toBe("linter");
+    a.send({ type: "BACK" });
     expect(a.getSnapshot().value).toBe("skills");
 
     a.send({ type: "SUBMIT_SKILLS", installShadcnSkill: true });
+    expect(a.getSnapshot().value).toBe("linter");
+
+    a.send({ type: "SUBMIT_LINTER", linter: "none" });
     expect(a.getSnapshot().value).toBe("init-options");
 
     a.send({
@@ -248,8 +260,8 @@ describe("wizard machine", () => {
 });
 
 describe("wizard machine - phase metadata", () => {
-  it("WIZARD_PHASE_TOTAL is 8", () => {
-    expect(WIZARD_PHASE_TOTAL).toBe(8);
+  it("WIZARD_PHASE_TOTAL is 9", () => {
+    expect(WIZARD_PHASE_TOTAL).toBe(9);
   });
 
   it("phaseFor returns null for install", () => {
@@ -266,7 +278,8 @@ describe("wizard machine - phase metadata", () => {
     expect(phaseFor("components")).toBe(4);
     expect(phaseFor("registries")).toBe(5);
     expect(phaseFor("skills")).toBe(6);
-    expect(phaseFor("init-options")).toBe(7);
-    expect(phaseFor("review")).toBe(8);
+    expect(phaseFor("linter")).toBe(7);
+    expect(phaseFor("init-options")).toBe(8);
+    expect(phaseFor("review")).toBe(9);
   });
 });

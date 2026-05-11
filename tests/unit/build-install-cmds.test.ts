@@ -161,6 +161,68 @@ describe('build-install-cmds', () => {
     expect(init.argv).toContain('--no-base-style');
   });
 
+  it('linter "none" (or absent) appends no linter cmds', () => {
+    if (!ready()) return;
+    const baseline = build!(baseState(), 'pnpm');
+    const withNone = build!(baseState({ linter: 'none' }), 'pnpm');
+    expect(withNone.length).toBe(baseline.length);
+    const hasLinterMention = (cs: CmdSpec[]) =>
+      cs.some((c) =>
+        c.argv.some((a) =>
+          /(?:@biomejs\/biome|ultracite|^oxlint$)/.test(a),
+        ),
+      );
+    expect(hasLinterMention(baseline)).toBe(false);
+    expect(hasLinterMention(withNone)).toBe(false);
+  });
+
+  it('linter "biome" emits an add-dev cmd + biome init exec', () => {
+    if (!ready()) return;
+    const cmds = build!(baseState({ linter: 'biome' }), 'pnpm');
+    const add = cmds.find((c) =>
+      c.argv.includes('@biomejs/biome') && c.argv.includes('add'),
+    );
+    expect(add).toBeDefined();
+    expect(add!.argv).toContain('-D');
+    expect(add!.argv).toContain('-E');
+    const init = cmds.find(
+      (c) => c.argv.includes('biome') && c.argv.includes('init'),
+    );
+    expect(init).toBeDefined();
+    expect(init!.argv.slice(0, 2)).toEqual(['pnpm', 'exec']);
+  });
+
+  it('linter "biome" with npm uses npm install + npx exec', () => {
+    if (!ready()) return;
+    const cmds = build!(baseState({ linter: 'biome' }), 'npm');
+    const add = cmds.find((c) => c.argv.includes('@biomejs/biome'));
+    expect(add!.argv.slice(0, 4)).toEqual(['npm', 'install', '-D', '-E']);
+    const init = cmds.find(
+      (c) => c.argv.includes('biome') && c.argv.includes('init'),
+    );
+    expect(init!.argv[0]).toBe('npx');
+  });
+
+  it('linter "ultracite" emits a single dlx init cmd', () => {
+    if (!ready()) return;
+    const cmds = build!(baseState({ linter: 'ultracite' }), 'pnpm');
+    const ultra = cmds.filter((c) =>
+      c.argv.some((a) => a.startsWith('ultracite')),
+    );
+    expect(ultra.length).toBe(1);
+    expect(ultra[0]!.argv).toContain('init');
+    expect(ultra[0]!.argv.slice(0, 2)).toEqual(['pnpm', 'dlx']);
+  });
+
+  it('linter "oxlint" emits a single add-dev cmd, no init', () => {
+    if (!ready()) return;
+    const cmds = build!(baseState({ linter: 'oxlint' }), 'pnpm');
+    const ox = cmds.filter((c) => c.argv.includes('oxlint'));
+    expect(ox.length).toBe(1);
+    expect(ox[0]!.argv).toContain('-D');
+    expect(ox[0]!.argv).not.toContain('init');
+  });
+
   it('PM dlx prefixes: pnpm dlx, npx, yarn dlx, bunx', () => {
     if (!ready()) {
       // TODO(impl): assert each pm produces the matching launcher prefix.

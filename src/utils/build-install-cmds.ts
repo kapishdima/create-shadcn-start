@@ -28,6 +28,34 @@ function dlxPrefix(pm: PM): string[] {
   }
 }
 
+// Map PM -> dev-dep install head with exact pinning.
+function pmAddDevPrefix(pm: PM): string[] {
+  switch (pm) {
+    case "npm":
+      return ["npm", "install", "-D", "-E"];
+    case "pnpm":
+      return ["pnpm", "add", "-D", "-E"];
+    case "yarn":
+      return ["yarn", "add", "-D", "-E"];
+    case "bun":
+      return ["bun", "add", "-d", "--exact"];
+  }
+}
+
+// Map PM -> local-binary exec head.
+function pmExecPrefix(pm: PM): string[] {
+  switch (pm) {
+    case "npm":
+      return ["npx"];
+    case "pnpm":
+      return ["pnpm", "exec"];
+    case "yarn":
+      return ["yarn"];
+    case "bun":
+      return ["bunx"];
+  }
+}
+
 // Pure: state -> ordered list of subprocesses to run during the install step.
 //
 // Ordering:
@@ -51,6 +79,7 @@ export function buildInstallCmds(
     registries?: string[];
     customRegistries?: string[];
     installShadcnSkill?: boolean;
+    linter?: string;
     initOptions?: InitOptions;
   },
   pm: PM | string,
@@ -120,6 +149,42 @@ export function buildInstallCmds(
       argv: ["npx", "skills@latest", "add", "shadcn-ui/ui", "--skill", "shadcn"],
       cwd: projectDir,
     });
+  }
+
+  // 5. linter (if not "none") - runs in the freshly-scaffolded project.
+  switch (stateLike.linter) {
+    case "biome": {
+      const addDev = pmAddDevPrefix(resolvedPm);
+      const exec = pmExecPrefix(resolvedPm);
+      cmds.push({
+        pm: resolvedPm,
+        argv: [...addDev, "@biomejs/biome"],
+        cwd: projectDir,
+      });
+      cmds.push({
+        pm: resolvedPm,
+        argv: [...exec, "biome", "init"],
+        cwd: projectDir,
+      });
+      break;
+    }
+    case "ultracite": {
+      cmds.push({
+        pm: resolvedPm,
+        argv: [...dlx, "ultracite@latest", "init"],
+        cwd: projectDir,
+      });
+      break;
+    }
+    case "oxlint": {
+      const addDev = pmAddDevPrefix(resolvedPm);
+      cmds.push({
+        pm: resolvedPm,
+        argv: [...addDev, "oxlint"],
+        cwd: projectDir,
+      });
+      break;
+    }
   }
 
   return cmds;

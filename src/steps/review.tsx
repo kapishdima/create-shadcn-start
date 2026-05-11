@@ -61,6 +61,7 @@ export function Review({ ctx, onConfirm, onBack }: ReviewProps) {
         );
 
   const skillDisplay = ctx.installShadcnSkill ? "yes" : "no";
+  const linterDisplay = ctx.linter;
   const frameworkDisplay = ctx.frameworkTemplate ?? "next";
   const initOptionsDisplay = truncate(
     summarizeInitOptions(ctx.initOptions),
@@ -76,6 +77,7 @@ export function Review({ ctx, onConfirm, onBack }: ReviewProps) {
         <Row label="Components" value={componentsDisplay} />
         <Row label="Registries" value={registriesDisplay} />
         <Row label="Shadcn skill" value={skillDisplay} />
+        <Row label="Linter" value={linterDisplay} />
         <Row label="Init options" value={initOptionsDisplay} />
       </Box>
       <SelectInput

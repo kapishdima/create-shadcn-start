@@ -20,6 +20,7 @@ import { PresetPaste } from "./steps/preset-paste.js";
 import { Components } from "./steps/components.js";
 import { Registries } from "./steps/registries.js";
 import { Skills } from "./steps/skills.js";
+import { LinterStep } from "./steps/linter.js";
 import { InitOptionsStep } from "./steps/init-options.js";
 import { Review } from "./steps/review.js";
 
@@ -141,6 +142,13 @@ export function App({ initialProjectName, onComplete }: AppProps = {}) {
             onSubmit={(installShadcnSkill) =>
               send({ type: "SUBMIT_SKILLS", installShadcnSkill })
             }
+          />
+        );
+      case "linter":
+        return (
+          <LinterStep
+            initial={ctx.linter}
+            onSubmit={(linter) => send({ type: "SUBMIT_LINTER", linter })}
           />
         );
       case "init-options":
