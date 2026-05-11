@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.0
+
+### Minor Changes
+
+- [#3](https://github.com/kapishdima/create-shadcn-start/pull/3) [`f076d7b`](https://github.com/kapishdima/create-shadcn-start/commit/f076d7b270aa76141eef13f91aad5aaaa451c316) Thanks [@kapishdima](https://github.com/kapishdima)! - fixed project name validation
+
 ## 0.0.5
 
 ### Patch Changes
